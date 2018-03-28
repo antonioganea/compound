@@ -14,10 +14,18 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="C:/Users/Sapard/workspace/compound/lib/lua" />
+					<Add directory="lib" />
+					<Add directory="include/Registry" />
+					<Add directory="include/Utility" />
+					<Add directory="include/Display" />
+					<Add directory="include/Stage" />
+					<Add directory="include/Entities" />
+					<Add directory="include/" />
+					<Add directory="include" />
+					<Add directory="include/Networking" />
+					<Add directory="include/Gui" />
+					<Add directory="include/Debug" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="C:/Users/Sapard/workspace/compound/lib/lua" />
-				</ResourceCompiler>
 				<Linker>
 					<Add directory="C:/Users/Sapard/workspace/compound/lib/lua" />
 				</Linker>
@@ -38,6 +46,33 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/Config.h" />
+		<Unit filename="include/Debug/DebugLog.h" />
+		<Unit filename="include/Display/Display.h" />
+		<Unit filename="include/Entities/Crystal.h" />
+		<Unit filename="include/Entities/Emeraldo.h" />
+		<Unit filename="include/Entities/EmeraldoShard.h" />
+		<Unit filename="include/Entities/Entity.h" />
+		<Unit filename="include/Entities/Particle.h" />
+		<Unit filename="include/Entities/Rubie.h" />
+		<Unit filename="include/Entities/RubieLaser.h" />
+		<Unit filename="include/Entities/Sapheer.h" />
+		<Unit filename="include/Gui/GuiButton.h" />
+		<Unit filename="include/Gui/GuiEditField.h" />
+		<Unit filename="include/Gui/GuiElement.h" />
+		<Unit filename="include/Gui/GuiLabel.h" />
+		<Unit filename="include/Gui/HealthBar.h" />
+		<Unit filename="include/Networking/SyncManager.h" />
+		<Unit filename="include/Registry/GameRegistry.h" />
+		<Unit filename="include/Stage/ConnectMenu.h" />
+		<Unit filename="include/Stage/CreditsMenu.h" />
+		<Unit filename="include/Stage/GameState.h" />
+		<Unit filename="include/Stage/MainMenu.h" />
+		<Unit filename="include/Stage/PickMenu.h" />
+		<Unit filename="include/Stage/Stage.h" />
+		<Unit filename="include/Stage/StageManager.h" />
+		<Unit filename="include/Utility/Geometry.h" />
+		<Unit filename="include/Utility/Mechanics.h" />
 		<Unit filename="lib/lua.hpp" />
 		<Unit filename="lib/lua/lapi.c">
 			<Option compilerVar="CC" />
@@ -172,7 +207,34 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="lib/lua/lzio.h" />
-		<Unit filename="main.cpp" />
+		<Unit filename="main.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="src/Debug/DebugLog.cpp" />
+		<Unit filename="src/Display/Display.cpp" />
+		<Unit filename="src/Entities/Emeraldo.cpp" />
+		<Unit filename="src/Entities/EmeraldoShard.cpp" />
+		<Unit filename="src/Entities/Particle.cpp" />
+		<Unit filename="src/Entities/Rubie.cpp" />
+		<Unit filename="src/Entities/RubieLaser.cpp" />
+		<Unit filename="src/Entities/Sapheer.cpp" />
+		<Unit filename="src/Gui/GuiButton.cpp" />
+		<Unit filename="src/Gui/GuiEditField.cpp" />
+		<Unit filename="src/Gui/GuiLabel.cpp" />
+		<Unit filename="src/Gui/HealthBar.cpp" />
+		<Unit filename="src/Main.cpp" />
+		<Unit filename="src/Networking/SyncManager.cpp" />
+		<Unit filename="src/Registry/GameRegistry.cpp" />
+		<Unit filename="src/Stage/ConnectMenu.cpp" />
+		<Unit filename="src/Stage/CreditsMenu.cpp" />
+		<Unit filename="src/Stage/GameState.cpp" />
+		<Unit filename="src/Stage/MainMenu.cpp" />
+		<Unit filename="src/Stage/PickMenu.cpp" />
+		<Unit filename="src/Stage/Stage.cpp" />
+		<Unit filename="src/Stage/StageManager.cpp" />
+		<Unit filename="src/Utility/Geometry.cpp" />
+		<Unit filename="src/Utility/Mechanics.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
