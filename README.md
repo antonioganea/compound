@@ -7,7 +7,7 @@ C++ written 2D multiplayer/LAN game engine sprinkled with some Lua extensibility
 - Multiplayer
 - Moddable
 
-## Biblioteci folosite
+## Used Libraries
 
 <a href="https://www.sfml-dev.org/"><img src="https://www.sfml-dev.org/download/goodies/sfml-logo-small.png" height="50" hspace="20" /></a>
 <span> + </span>
