@@ -37,6 +37,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include/Gui" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -57,6 +58,7 @@
 		<Unit filename="include/Entities/Rubie.h" />
 		<Unit filename="include/Entities/RubieLaser.h" />
 		<Unit filename="include/Entities/Sapheer.h" />
+		<Unit filename="include/Gui/Console.h" />
 		<Unit filename="include/Gui/GuiButton.h" />
 		<Unit filename="include/Gui/GuiEditField.h" />
 		<Unit filename="include/Gui/GuiElement.h" />
@@ -219,6 +221,7 @@
 		<Unit filename="src/Entities/Rubie.cpp" />
 		<Unit filename="src/Entities/RubieLaser.cpp" />
 		<Unit filename="src/Entities/Sapheer.cpp" />
+		<Unit filename="src/Gui/Console.cpp" />
 		<Unit filename="src/Gui/GuiButton.cpp" />
 		<Unit filename="src/Gui/GuiEditField.cpp" />
 		<Unit filename="src/Gui/GuiLabel.cpp" />

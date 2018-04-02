@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include <Console.h>
+
 Stage * StageManager::currentStage;
 
 GameState * StageManager::gameState;
@@ -14,6 +16,8 @@ ConnectMenu * StageManager::connectMenu;
 PickMenu * StageManager::pickMenu;
 
 std::stack<Stage*> StageManager::m_stages;
+
+Console * console;
 
 void StageManager::init()
 {
@@ -25,6 +29,8 @@ void StageManager::init()
 
     StageManager::currentStage = mainMenu;
     m_stages.push(currentStage);
+
+    console = new Console;
 }
 
 void StageManager::pushStage( Stage * stage ){
@@ -58,12 +64,14 @@ void StageManager::updateCurrentStage(){
 
 void StageManager::input( const sf::Event & event )
 {
+    console->input( event );
     currentStage->input( event );
 }
 
 void StageManager::draw()
 {
     currentStage->draw();
+    console->draw();
 }
 
 StageManager::StageManager()
