@@ -1,6 +1,11 @@
 #include "Console.h"
 
-#include <Display.h>
+#include "Display.h"
+
+
+#include "LuaConsole.h"
+
+#include "SyncManager.h"
 
 float triangleSize = 10.f;
 
@@ -9,23 +14,39 @@ sf::Font myfont;
 char currentText[256];
 int index = 0;
 
-sf::Text * elements[10];
-int currentElement = 0;
+float Console::coverage = 0.3f;
+bool Console::visible = false;
 
-void Console::pushTextElement(char* buffer){
-    if ( currentElement < 10 ){
+sf::RectangleShape Console::background;
+sf::CircleShape Console::triangle;
+sf::Text Console::currentInput;
+sf::Text Console::label;
+float Console::width, Console::height;
+
+#define TEXT_ELEMENTS 18
+
+sf::Text * elements[TEXT_ELEMENTS];
+
+void Console::generateTextElements(){
+    for ( int i = 0; i < TEXT_ELEMENTS; i++ ){
         sf::Text * newText = new sf::Text();
-        newText->setString(buffer);
+        newText->setString("");
         newText->setColor(sf::Color::Green);
         newText->setCharacterSize(16);
         newText->setFont(myfont);
-        newText->setPosition(0,0);
-        elements[currentElement] = newText;
-        currentElement++;
+        newText->setPosition(5,i*16);
+        elements[i] = newText;
     }
 }
 
-Console::Console()
+void Console::pushTextElement ( const char * buffer ){
+    for ( int i = 0; i < TEXT_ELEMENTS-1; i++ ){
+        elements[i]->setString( elements[i+1]->getString() );
+    }
+    elements[TEXT_ELEMENTS-1]->setString(buffer);
+}
+
+void Console::init()
 {
     background.setFillColor(sf::Color(113, 214, 98,64));
     sf::Vector2u consoleSize = Display::window->getSize();
@@ -58,17 +79,20 @@ Console::Console()
     label.setPosition(width-label.getLocalBounds().width-3,height-label.getLocalBounds().height);
 
     setVisible(true);
-}
 
-Console::~Console()
-{
-    //dtor
+    generateTextElements();
 }
 
 void Console::setVisible(bool _visible)
 {
     visible = _visible;
 }
+
+bool Console::getVisible()
+{
+    return visible;
+}
+
 
 bool Console::input(sf::Event event)
 {
@@ -77,6 +101,8 @@ bool Console::input(sf::Event event)
             visible = !visible;
             return true;
         }
+        if ( visible )
+            return true;
     }
 
 
@@ -88,14 +114,19 @@ bool Console::input(sf::Event event)
                 index++;
                 currentInput.setString(currentText);
                 //printf("INDEX++ .. %d %c\n",index,event.text.unicode);
+                return true;
             }else if ( event.text.unicode == 8 ){ // backspace
                 index--;
                 if ( index < 0 )
                     index = 0;
                 currentText[index] = 0;
                 currentInput.setString(currentText);
+                return true;
             }else if ( event.text.unicode == 13 ){ // Carriage return / enter
                 pushTextElement(currentText);
+                LuaConsole::executeLine(currentText);
+                //SyncManager::sendTCPMessage(currentText,index);
+                //SyncManager::sendUDPMessage(currentText,index);
                 index = 0;
                 currentText[0] = 0;
                 currentInput.setString(currentText);
@@ -110,15 +141,16 @@ void Console::draw()
 {
 
     if ( visible ){
+        Display::window->setView(Display::GuiView);
         Display::window->draw(background);
         Display::window->draw(triangle);
         Display::window->draw(currentInput);
         Display::window->draw(label);
 
-        int start = 0;
-        for ( int i = 0; i < currentElement; i++ ){
-            elements[i]->setPosition(0,i*16);
+        for ( int i = 0; i < TEXT_ELEMENTS; i++ ){
+            //elements[i]->setPosition(0,i*16);
             Display::window->draw( *elements[i] );
         }
+        Display::window->setView(Display::view);
     }
 }

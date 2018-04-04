@@ -9,26 +9,31 @@
 class Console
 {
     public:
-        Console();
-        virtual ~Console();
 
-        void setVisible( bool visible );
-        bool input( sf::Event event );
+        //virtual ~Console();
 
-        void draw();
+        static void init();
+        static void setVisible( bool visible );
+        static bool getVisible();
+        static bool input( sf::Event event );
 
-        void pushTextElement( char * buffer );
+        static void draw();
+
+
+        static void pushTextElement ( const char * buffer );
 
     protected:
 
     private:
-        sf::RectangleShape background;
-        sf::CircleShape triangle;
-        sf::Text currentInput;
-        sf::Text label;
-        float coverage = 0.3f;
-        bool visible = false;
-        float width, height;
+        Console();
+        static void generateTextElements();
+        static sf::RectangleShape background;
+        static sf::CircleShape triangle;
+        static sf::Text currentInput;
+        static sf::Text label;
+        static float coverage;
+        static bool visible;
+        static float width, height;
 };
 
 #endif // CONSOLE_H

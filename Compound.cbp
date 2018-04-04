@@ -25,6 +25,7 @@
 					<Add directory="include/Networking" />
 					<Add directory="include/Gui" />
 					<Add directory="include/Debug" />
+					<Add directory="include/Scripting" />
 				</Compiler>
 				<Linker>
 					<Add directory="C:/Users/Sapard/workspace/compound/lib/lua" />
@@ -38,6 +39,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="include/Gui" />
+					<Add directory="include/Scripting" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -55,9 +57,6 @@
 		<Unit filename="include/Entities/EmeraldoShard.h" />
 		<Unit filename="include/Entities/Entity.h" />
 		<Unit filename="include/Entities/Particle.h" />
-		<Unit filename="include/Entities/Rubie.h" />
-		<Unit filename="include/Entities/RubieLaser.h" />
-		<Unit filename="include/Entities/Sapheer.h" />
 		<Unit filename="include/Gui/Console.h" />
 		<Unit filename="include/Gui/GuiButton.h" />
 		<Unit filename="include/Gui/GuiEditField.h" />
@@ -66,6 +65,7 @@
 		<Unit filename="include/Gui/HealthBar.h" />
 		<Unit filename="include/Networking/SyncManager.h" />
 		<Unit filename="include/Registry/GameRegistry.h" />
+		<Unit filename="include/Scripting/LuaConsole.h" />
 		<Unit filename="include/Stage/ConnectMenu.h" />
 		<Unit filename="include/Stage/CreditsMenu.h" />
 		<Unit filename="include/Stage/GameState.h" />
@@ -218,9 +218,6 @@
 		<Unit filename="src/Entities/Emeraldo.cpp" />
 		<Unit filename="src/Entities/EmeraldoShard.cpp" />
 		<Unit filename="src/Entities/Particle.cpp" />
-		<Unit filename="src/Entities/Rubie.cpp" />
-		<Unit filename="src/Entities/RubieLaser.cpp" />
-		<Unit filename="src/Entities/Sapheer.cpp" />
 		<Unit filename="src/Gui/Console.cpp" />
 		<Unit filename="src/Gui/GuiButton.cpp" />
 		<Unit filename="src/Gui/GuiEditField.cpp" />
@@ -229,6 +226,7 @@
 		<Unit filename="src/Main.cpp" />
 		<Unit filename="src/Networking/SyncManager.cpp" />
 		<Unit filename="src/Registry/GameRegistry.cpp" />
+		<Unit filename="src/Scripting/LuaConsole.cpp" />
 		<Unit filename="src/Stage/ConnectMenu.cpp" />
 		<Unit filename="src/Stage/CreditsMenu.cpp" />
 		<Unit filename="src/Stage/GameState.cpp" />

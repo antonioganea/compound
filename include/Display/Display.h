@@ -13,6 +13,7 @@ class Display
         static void resetView();
         static sf::RenderWindow * window;
         static sf::View view;
+        static sf::View GuiView;
     protected:
 
     private:

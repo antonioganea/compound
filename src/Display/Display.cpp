@@ -6,6 +6,7 @@
 
 sf::RenderWindow * Display::window;
 sf::View Display::view;
+sf::View Display::GuiView;
 
 void Display::init()
 {
@@ -15,6 +16,9 @@ void Display::init()
     Display::window->setKeyRepeatEnabled(false);
 
     Display::view.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+    Display::view.setCenter(WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
+    Display::GuiView.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+    Display::GuiView.setCenter(WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
 }
 
 void Display::focusOn( Crystal * crystal ){

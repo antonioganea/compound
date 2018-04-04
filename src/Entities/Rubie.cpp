@@ -90,8 +90,8 @@ void Rubie::update(float dt){
 
     if (cooldown) cooldown--;
 
-    if ( syncable )
-        SyncManager::sendPosition(sprite.getPosition());
+    //if ( syncable )
+        //SyncManager::sendPosition(sprite.getPosition());
 
     for ( int laser = 0; laser < MAX_LASERS; laser++ ){
         if ( !lasers[laser].isDead() ){

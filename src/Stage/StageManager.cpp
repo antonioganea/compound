@@ -17,8 +17,6 @@ PickMenu * StageManager::pickMenu;
 
 std::stack<Stage*> StageManager::m_stages;
 
-Console * console;
-
 void StageManager::init()
 {
     StageManager::gameState = new GameState;
@@ -30,7 +28,7 @@ void StageManager::init()
     StageManager::currentStage = mainMenu;
     m_stages.push(currentStage);
 
-    console = new Console;
+    Console::init();
 }
 
 void StageManager::pushStage( Stage * stage ){
@@ -64,14 +62,15 @@ void StageManager::updateCurrentStage(){
 
 void StageManager::input( const sf::Event & event )
 {
-    console->input( event );
+    if ( Console::input( event ) )
+        return;
     currentStage->input( event );
 }
 
 void StageManager::draw()
 {
     currentStage->draw();
-    console->draw();
+    Console::draw();
 }
 
 StageManager::StageManager()

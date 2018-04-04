@@ -4,7 +4,7 @@
 #include "GameRegistry.h"
 #include "StageManager.h"
 
-//#include "SyncManager.h"
+#include "SyncManager.h"
 #include "Config.h"
 
 #include "Emeraldo.h"
@@ -17,6 +17,8 @@
 
 #include "DebugLog.h"
 
+#include "LuaConsole.h"
+
 int main(){
     srand(time(NULL));
 
@@ -24,7 +26,7 @@ int main(){
     Display::init();
     StageManager::init();
 
-    //SyncManager::init();
+    SyncManager::init();
 
     sf::View view;
 
@@ -39,6 +41,11 @@ int main(){
     sf::CircleShape circle;
     circle.setRadius(50.f);
     circle.setFillColor(sf::Color::Green);
+
+    LuaConsole::init();
+    LuaConsole::execute("resources/crystal/__resource.lua");
+
+    SyncManager::connectToServer(sf::IpAddress("127.0.0.1"));
 
     while (Display::window->isOpen()){
 
@@ -56,7 +63,7 @@ int main(){
             StageManager::input(event);
         }
 
-        //SyncManager::receivePackets();
+        SyncManager::receivePackets();
 
         StageManager::update(10.f);
 

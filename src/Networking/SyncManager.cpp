@@ -1,10 +1,11 @@
 #include "SyncManager.h"
 
 #include "StageManager.h"
+/*
 #include "Emeraldo.h"
 #include "Rubie.h"
 #include "Sapheer.h"
-
+*/
 #include <string.h>
 #include <iostream>
 
@@ -16,18 +17,18 @@ short unsigned int SyncManager::serverPort;
 short unsigned int SyncManager::localUDPPort;
 bool SyncManager::connected;
 char * SyncManager::packageBuffer;
-Crystal * SyncManager::crystals[MAX_PLAYERS];
-char * SyncManager::options;
+
+//Crystal * SyncManager::crystals[MAX_PLAYERS];
+//char * SyncManager::options;
 bool SyncManager::players[MAX_PLAYERS];
 int SyncManager::myPlayerID;
 
-
 void SyncManager::init(){
     SyncManager::packageBuffer = new char[128];
-    SyncManager::options = new char[128];
+    //SyncManager::options = new char[128];
     for ( int i = 0; i < MAX_PLAYERS; i++ ){
         SyncManager::players[i] = false;
-        SyncManager::crystals[i]= NULL;
+        //SyncManager::crystals[i]= NULL;
     }
     std::cout << "SyncManager Initialized!" << std::endl;
     SyncManager::myPlayerID = -1;
@@ -46,7 +47,7 @@ void SyncManager::connectToServer( const sf::IpAddress& _address ){
     }
     else
         std::cout << "Failed to connect to server!" << std::endl;
-/*
+
     // UDP socket:
     SyncManager::address = _address;
     //SyncManager::serverPort = 4474;
@@ -57,11 +58,21 @@ void SyncManager::connectToServer( const sf::IpAddress& _address ){
     else{
         std::cout << "Successfuly bound UDP socket" << std::endl;
     }
-*/
+    SyncManager::udpSocket.setBlocking(false);
+}
+
+
+void SyncManager::sendTCPMessage( const char* buffer, size_t size ){
+    SyncManager::tcpSocket.send( buffer, size );
+}
+
+void SyncManager::sendUDPMessage( const char* buffer, size_t size ){
+    SyncManager::udpSocket.send( buffer, size, SyncManager::address, SyncManager::serverPort );
 }
 
 
 //*********************************SENDING PART***************************************
+/*
 void SyncManager::sendCrystalType ( int type ){
     SyncManager::packageBuffer[0] = 1;//package type
     SyncManager::packageBuffer[1] = type;
@@ -111,8 +122,8 @@ void SyncManager::sendPosition(const sf::Vector2f& position){
     if ( != sf::Socket::Done){
         std::cout << "Error sending UDP packet - position" << std::endl;
     }*/
-}
-
+//}
+/*
 void SyncManager::sendShoot( const sf::Vector2f& velocity ){
     float x = velocity.x;
     float y = velocity.y;
@@ -156,7 +167,7 @@ void SyncManager::sendParticleCollision( int player ){
     memcpy(SyncManager::packageBuffer+1,&player,4);
     SyncManager::tcpSocket.send(SyncManager::packageBuffer,5);
 }
-
+*/
 //**************************************************************************************
 
 //**********************************RECEIVING PART**************************************
@@ -174,23 +185,23 @@ void SyncManager::receivePackets(){
     status = SyncManager::tcpSocket.receive(SyncManager::packageBuffer,128,received);
 
     if ( status == sf::Socket::Status::Done ){
-        SyncManager::parseBuffer( received );
+        //SyncManager::parseBuffer( received );
 
-        /*
+
         std::cout << "RECEIVED A PACKET (TCP)" << received << " bytes" << std::endl;
         for ( int i = 0; i < received; i++ ){
             std::cout << (int)(SyncManager::packageBuffer[i]) << " ";
         }std::cout << std::endl;
-        */
 
-    }/*
+
+    }
     else{
         if ( status == sf::Socket::Status::Error )
             std::cout << "ERORR ON PACKAGE RECEIVEING (TCP) !!!!!!!!!!!!!!!!" << std::endl;
         else if ( status == sf::Socket::Status::Partial )
             std::cout << "Partial receive might cause bugs!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
         // TODO : in case of other crashes, insert disconnected status error code and inspect further
-    }*/
+    }
     SyncManager::tcpSocket.setBlocking(true); // TODO : GET RID OF THIS
 
     //END OF TCP RECEIVING PART ----------------------------------------------------------
@@ -226,6 +237,10 @@ void SyncManager::receivePackets(){
 }
 
 void SyncManager::parseBuffer( std::size_t received ){
+
+    printf( "Received : %s\n", packageBuffer );
+
+    /*
     char * cursor = SyncManager::packageBuffer;
     int player;
 
@@ -382,14 +397,14 @@ void SyncManager::parseBuffer( std::size_t received ){
             }
             //...
         }
-    }
+    }*/
 }
 //**************************************************************************************
-
+/*
 void SyncManager::input( sf::Event event ){
 
     if ( SyncManager::myPlayerID != -1 ){
         if ( SyncManager::crystals[SyncManager::myPlayerID] )
             SyncManager::crystals[SyncManager::myPlayerID]->input(event);
     }
-}
+}*/
