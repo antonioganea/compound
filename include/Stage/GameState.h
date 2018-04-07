@@ -6,6 +6,7 @@
 #include "Stage.h"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include "Object.h"
 
 class GameState : public Stage
 {
@@ -19,6 +20,9 @@ class GameState : public Stage
         void draw();
         sf::CircleShape circle;
         sf::RectangleShape arena;
+
+        Object * getObject( int objectID );
+
     protected:
 
     private:

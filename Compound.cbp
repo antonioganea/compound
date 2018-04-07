@@ -40,6 +40,7 @@
 					<Add option="-O2" />
 					<Add directory="include/Gui" />
 					<Add directory="include/Scripting" />
+					<Add directory="include/Entities" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -56,6 +57,7 @@
 		<Unit filename="include/Entities/Emeraldo.h" />
 		<Unit filename="include/Entities/EmeraldoShard.h" />
 		<Unit filename="include/Entities/Entity.h" />
+		<Unit filename="include/Entities/Object.h" />
 		<Unit filename="include/Entities/Particle.h" />
 		<Unit filename="include/Gui/Console.h" />
 		<Unit filename="include/Gui/GuiButton.h" />
@@ -217,6 +219,7 @@
 		<Unit filename="src/Display/Display.cpp" />
 		<Unit filename="src/Entities/Emeraldo.cpp" />
 		<Unit filename="src/Entities/EmeraldoShard.cpp" />
+		<Unit filename="src/Entities/Object.cpp" />
 		<Unit filename="src/Entities/Particle.cpp" />
 		<Unit filename="src/Gui/Console.cpp" />
 		<Unit filename="src/Gui/GuiButton.cpp" />

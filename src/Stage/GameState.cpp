@@ -6,9 +6,12 @@
 #include "GameRegistry.h"
 #include "Display.h"
 
-#include "Emeraldo.h"
+//#include "Emeraldo.h"
+//Emeraldo * emeraldo;
 
-Emeraldo * emeraldo;
+#include "Object.h"
+
+Object * myObject;
 
 GameState::GameState()
 {
@@ -33,13 +36,21 @@ GameState::GameState()
     //testCrystal = new Emeraldo();
 
 
-    emeraldo = new Emeraldo();
-    addEntity( emeraldo );
+    //emeraldo = new Emeraldo();
+    //addEntity( emeraldo );
+
+    myObject = new Object();
+    addEntity(myObject);
+
 }
 
 GameState::~GameState()
 {
     //dtor
+}
+
+Object * GameState::getObject( int objectID ){
+    return myObject;
 }
 
 void GameState::addEntity( Entity * entity )
@@ -73,7 +84,7 @@ void GameState::input( const sf::Event & event )
 {
     //SyncManager::input(event);
 
-    emeraldo->input( event );
+    //emeraldo->input( event );
 }
 
 void GameState::draw()
@@ -88,7 +99,7 @@ void GameState::draw()
     }
     */
 
-    Crystal * viewTarget = 0;
+    //Crystal * viewTarget = 0;
     /*
     if ( SyncManager::myPlayerID != -1 ){ // need better function for this checking
         if ( SyncManager::crystals[SyncManager::myPlayerID] != NULL ){ // need better function for this checking
@@ -104,8 +115,10 @@ void GameState::draw()
             }
         }
     }*/
+
     //Display::focusOn(viewTarget);
-    Display::focusOn(emeraldo);
+
+    //Display::focusOn(myObject);
 
     Display::window->draw(arena);
     Display::window->draw(circle);

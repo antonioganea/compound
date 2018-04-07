@@ -23,6 +23,8 @@ char * SyncManager::packageBuffer;
 bool SyncManager::players[MAX_PLAYERS];
 int SyncManager::myPlayerID;
 
+std::map<std::string,int,strless> SyncManager::serverEvents;
+
 void SyncManager::init(){
     SyncManager::packageBuffer = new char[128];
     //SyncManager::options = new char[128];
@@ -69,6 +71,41 @@ void SyncManager::sendTCPMessage( const char* buffer, size_t size ){
 void SyncManager::sendUDPMessage( const char* buffer, size_t size ){
     SyncManager::udpSocket.send( buffer, size, SyncManager::address, SyncManager::serverPort );
 }
+
+void SyncManager::triggerServerEvent( const char * eventName ){
+    sf::Packet packet;
+    //packet << events[ eventName ];
+    //SyncManager::tcpSocket.send(packet);
+
+    sf::Int32 eventCode = -1;
+
+    std::map<std::string,int,strless>::iterator it;
+    it = serverEvents.find(eventName);
+    if (it != serverEvents.end()){
+        eventCode = it->second;
+        packet << eventCode;
+        SyncManager::tcpSocket.send(packet);
+        std::cout << "Triggered server event " << eventName << std::endl;
+    }
+    else{
+        std::cout << "ERROR : Packet not sent, Event not found : "  << eventName << std::endl;
+    }
+}
+void SyncManager::registerServerEvent( const char* eventName, int id )
+{
+    //hashmap.add(eventname,id);
+
+    /*
+    for ( map<string,int,strless>::const_iterator i = myMap.begin(); i != myMap.end(); ++i ) {
+        cout << (*i).first << " " << (*i).second << endl;
+    }*/
+    //cout << myMap.find("onPlayerDropped")->first;
+    //myMap["onPlayerJoined"] = 1;
+
+    serverEvents[eventName] = id;
+}
+
+
 
 
 //*********************************SENDING PART***************************************

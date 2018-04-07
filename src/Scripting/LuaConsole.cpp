@@ -1,5 +1,9 @@
 #include "LuaConsole.h"
 #include "Console.h"
+#include "StageManager.h"
+#include "SyncManager.h"
+#include <string.h>
+
 
 lua_State * LuaConsole::state = NULL;
 
@@ -22,6 +26,47 @@ int l_my_print(lua_State* L) {
     return 0;
 }
 
+// SetPosition( object, x, y )
+int l_SetPosition(lua_State* L) {
+
+    int objectID;
+    float x,y;
+
+    if ( luaL_checkinteger(L,-3) ){
+        objectID = lua_tonumber(L,-3);
+    }
+
+    x = lua_tonumber(L,-2);
+    y = lua_tonumber(L,-1);
+
+    StageManager::gameState->getObject(objectID)->setPosition(x,y);
+
+    return 0;
+}
+
+// RegisterServerEvent ( eventName, eventCode )
+int l_RegisterServerEvent(lua_State* L) {
+
+    char eventName[256];
+
+    strcpy(eventName,lua_tostring(L,-2));
+    int eventCode = lua_tonumber(L,-1);
+
+    SyncManager::registerServerEvent(eventName,eventCode);
+
+    return 0;
+}
+
+// TriggerServerEvent ( eventName )
+int l_TriggerServerEvent(lua_State* L) {
+
+    char eventName[256];
+    strcpy(eventName,lua_tostring(L,-1));
+    SyncManager::triggerServerEvent(eventName);
+
+    return 0;
+}
+
 
 void LuaConsole::init(){
     if ( state == NULL ){
@@ -32,6 +77,14 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_my_print);
         lua_setglobal(state, "print");
+        lua_pushcfunction(state, l_SetPosition);
+        lua_setglobal(state, "SetPosition");
+
+        lua_pushcfunction(state, l_RegisterServerEvent);
+        lua_setglobal(state, "RegisterServerEvent");
+
+        lua_pushcfunction(state, l_TriggerServerEvent);
+        lua_setglobal(state, "TriggerServerEvent");
     }
 }
 

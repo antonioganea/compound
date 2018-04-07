@@ -28,6 +28,9 @@ void StageManager::init()
     StageManager::currentStage = mainMenu;
     m_stages.push(currentStage);
 
+    //Debug :
+    pushStage(gameState);
+
     Console::init();
 }
 

@@ -4,7 +4,17 @@
 #include <SFML/Network.hpp>
 #include "Crystal.h"
 
+#include <string>
+#include <map>
+
 #define MAX_PLAYERS 16
+
+class strless {
+   public:
+      bool operator() (const std::string & first, const std::string & second ) const  {
+         return first < second;
+      }
+};
 
 class SyncManager
 {
@@ -46,10 +56,14 @@ class SyncManager
 
         //static void input( sf::Event event );
 
+        static void triggerServerEvent( const char * eventName );
+        static void registerServerEvent( const char * eventName, int id );
+
     protected:
 
     private:
         SyncManager();
+        static std::map<std::string,int,strless> serverEvents;
 };
 
 #endif // SYNCMANAGER_H

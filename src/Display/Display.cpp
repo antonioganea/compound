@@ -21,10 +21,10 @@ void Display::init()
     Display::GuiView.setCenter(WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
 }
 
-void Display::focusOn( Crystal * crystal ){
+void Display::focusOn( Object * object ){
     sf::Vector2f velocity;
-    if ( crystal )
-        velocity = crystal->getPosition()-Display::view.getCenter();
+    if ( object )
+        velocity = object->getPosition()-Display::view.getCenter();
     else
         velocity = -Display::view.getCenter();
     velocity /= 10.f;

@@ -31,7 +31,7 @@ void Console::generateTextElements(){
     for ( int i = 0; i < TEXT_ELEMENTS; i++ ){
         sf::Text * newText = new sf::Text();
         newText->setString("");
-        newText->setColor(sf::Color::Green);
+        newText->setFillColor(sf::Color::Green);
         newText->setCharacterSize(16);
         newText->setFont(myfont);
         newText->setPosition(5,i*16);
@@ -66,14 +66,14 @@ void Console::init()
 
     myfont.loadFromFile("data/fonts/Ubuntu-R.ttf");
 
-    currentInput.setColor(sf::Color::Green);
+    currentInput.setFillColor(sf::Color::Green);
     //currentInput.setString("HELLOWORLD");
     currentInput.setCharacterSize(16);
     currentInput.setFont(myfont);
     currentInput.setPosition(triangleSize*2,height-triangleSize*2);
 
     label.setColor(sf::Color::Green);
-    label.setString("Compound Console v0.1");
+    label.setString("Compound Console v0.3");
     label.setCharacterSize(16);
     label.setFont(myfont);
     label.setPosition(width-label.getLocalBounds().width-3,height-label.getLocalBounds().height);

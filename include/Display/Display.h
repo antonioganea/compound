@@ -3,13 +3,13 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
-#include "Crystal.h"
+#include "Object.h"
 
 class Display
 {
     public:
         static void init();
-        static void focusOn( Crystal * crystal );
+        static void focusOn( Object * crystal );
         static void resetView();
         static sf::RenderWindow * window;
         static sf::View view;
