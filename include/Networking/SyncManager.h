@@ -22,30 +22,22 @@ class SyncManager
         static void init();
         static void connectToServer( const sf::IpAddress& address );
 
+        static sf::SocketSelector socketSelector;
         static sf::TcpSocket tcpSocket;
         static sf::UdpSocket udpSocket;
         static sf::IpAddress address;
         static short unsigned int serverPort;
         static short unsigned int localUDPPort;
         static bool connected;
-        static char * packageBuffer;
+        //static char * packageBuffer;
+        static sf::Packet packet;
         static sf::SocketSelector selector;
 
         static void sendTCPMessage( const char * buffer, size_t size );
         static void sendUDPMessage( const char * buffer, size_t size );
 
-        //static void sendCrystalType ( int type );
-        //static void sendPosition( const sf::Vector2f& position );
-        //static void sendShoot( const sf::Vector2f& velocity );
-        //static void sendUltimate();
-        //static void sendUltimate( char options );
-        //static void sendUltimate( float options );
-        //static void sendLaserCollision( int player );
-        //static void sendParticleCollision( int player );
-        //static void sendShieldCollision( int player );
-
         static void receivePackets();
-        static void parseBuffer( std::size_t received );
+        static void parseBuffer();
 
         static int myPlayerID;
         //static Crystal * myCrystal;
@@ -57,13 +49,19 @@ class SyncManager
         //static void input( sf::Event event );
 
         static void triggerServerEvent( const char * eventName );
-        static void registerServerEvent( const char * eventName, int id );
+        static void registerServerEvent( const char * eventName, sf::Uint16 id );
+        static void requestServerEvents();
+
+
+        static void requestClientEvent( const char * eventName );
+        static void registerClientEvent( const char * eventName, sf::Uint16 id );
 
     protected:
 
     private:
         SyncManager();
-        static std::map<std::string,int,strless> serverEvents;
+        static std::map<std::string,sf::Uint16,strless> serverEvents;
+        static std::map<std::string,sf::Uint16,strless> clientEvents;
 };
 
 #endif // SYNCMANAGER_H

@@ -23,7 +23,7 @@ void Object::update(float dt){
 }
 
 bool Object::isDead(){
-
+    return false;
 }
 
 void Object::setPosition(const sf::Vector2f& position)

@@ -63,7 +63,7 @@ int main(){
             StageManager::input(event);
         }
 
-        //SyncManager::receivePackets();
+        SyncManager::receivePackets();
 
         StageManager::update(10.f);
 

@@ -45,6 +45,7 @@ int l_SetPosition(lua_State* L) {
 }
 
 // RegisterServerEvent ( eventName, eventCode )
+// This is left for debug
 int l_RegisterServerEvent(lua_State* L) {
 
     char eventName[256];
