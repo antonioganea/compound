@@ -44,6 +44,16 @@ int l_SetPosition(lua_State* L) {
     return 0;
 }
 
+// CreateObject()
+int l_CreateObject(lua_State* L){
+    Object * newObject = new Object();
+    sf::Uint16 id = StageManager::gameState->registerClientObject( newObject );
+
+    lua_pushnumber( L, id );
+
+    return 1;
+}
+
 // RegisterServerEvent ( eventName, eventCode )
 // This is left for debug
 int l_RegisterServerEvent(lua_State* L) {
@@ -68,6 +78,51 @@ int l_TriggerServerEvent(lua_State* L) {
     return 0;
 }
 
+// RegisterClientEvent ( eventName )
+int l_RegisterClientEvent(lua_State* L) {
+    char eventName[256];
+
+    strcpy(eventName,lua_tostring(L,-1));
+
+    SyncManager::requestClientEvent(eventName);
+
+    return 0;
+}
+
+// AddEventHandler ( eventName, eventHandler )
+int l_AddEventHandler(lua_State* L) {
+
+    //char eventName[256];
+    //strcpy(eventName,lua_tostring(L,-2));
+
+    //TODO : checktypes
+
+    lua_settable(L, LUA_REGISTRYINDEX);
+
+    return 0;
+}
+
+void LuaConsole::triggerClientEvent( const char * eventName ){
+    lua_pushstring(LuaConsole::state, eventName);
+    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
+
+    //Now the function is on top of the stack
+    lua_call(LuaConsole::state,0,0);
+}
+
+void LuaConsole::triggerKeyPressEvent( sf::Uint16 key ){
+    lua_pushstring(LuaConsole::state, "onKeyPress");
+    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
+
+    if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
+        return;
+
+    lua_pushnumber( LuaConsole::state, key );
+
+    //Now the function is on top of the stack
+    lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+}
+
 
 void LuaConsole::init(){
     if ( state == NULL ){
@@ -86,6 +141,14 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_TriggerServerEvent);
         lua_setglobal(state, "TriggerServerEvent");
+
+        lua_pushcfunction(state, l_AddEventHandler);
+        lua_setglobal(state, "AddEventHandler");
+
+        lua_pushcfunction(state, l_CreateObject);
+        lua_setglobal(state, "CreateObject");
+
+
     }
 }
 

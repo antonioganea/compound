@@ -43,7 +43,7 @@ int main(){
     circle.setFillColor(sf::Color::Green);
 
     LuaConsole::init();
-    LuaConsole::execute("resources/crystal/__resource.lua");
+    LuaConsole::execute("resources/crystal/client.lua");
 
     SyncManager::connectToServer(sf::IpAddress("127.0.0.1"));
 
@@ -59,6 +59,7 @@ int main(){
             if (event.type == sf::Event::KeyPressed ){
                 if ( event.key.code == sf::Keyboard::Escape )
                     Display::window->close();
+                LuaConsole::triggerKeyPressEvent( event.key.code );
             }
             StageManager::input(event);
         }

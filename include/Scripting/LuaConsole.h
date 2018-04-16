@@ -9,6 +9,8 @@
 # include <lauxlib.h>
 #endif
 
+#include <SFML/System.hpp>
+
 class LuaConsole
 {
     public:
@@ -16,6 +18,9 @@ class LuaConsole
         static void print_error(lua_State* state);
         static void execute(const char* filename);
         static void executeLine( const char * s );
+
+        static void triggerClientEvent( const char * eventName );
+        static void triggerKeyPressEvent( sf::Uint16 key );
     protected:
 
     private:

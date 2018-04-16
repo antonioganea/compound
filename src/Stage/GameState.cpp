@@ -6,12 +6,9 @@
 #include "GameRegistry.h"
 #include "Display.h"
 
-//#include "Emeraldo.h"
-//Emeraldo * emeraldo;
-
 #include "Object.h"
 
-Object * myObject;
+//Object * myObject;
 
 GameState::GameState()
 {
@@ -33,15 +30,8 @@ GameState::GameState()
     circle.setOrigin(2500,2500);
     circle.setPosition(0,0);
 
-    //testCrystal = new Emeraldo();
-
-
-    //emeraldo = new Emeraldo();
-    //addEntity( emeraldo );
-
-    myObject = new Object();
-    addEntity(myObject);
-
+    //myObject = new Object();
+    //registerClientObject(myObject);
 }
 
 GameState::~GameState()
@@ -49,81 +39,76 @@ GameState::~GameState()
     //dtor
 }
 
-Object * GameState::getObject( int objectID ){
-    return myObject;
+Object * GameState::getObject( sf::Uint16 objectID ){
+    return m_objects[objectID];
 }
 
-void GameState::addEntity( Entity * entity )
-{
-    std::cout << "Added object to gamestate!" << std::endl;
-    ps_entities.push_back( entity );
+sf::Uint16 GameState::registerClientObject( Object * object ){
+    for ( sf::Uint16 i = MAX_SERVER_OBJECTS; i < maxClientObject; i++ ){
+        if ( m_objects[i] == 0 ){
+            m_objects[i] = object;
+            std::cout << "Added client object to gamestate! id : " << i << std::endl;
+            return i;
+        }
+    }
+    m_objects[maxClientObject] = object;
+    std::cout << "Added client object to gamestate! id : " << maxClientObject << std::endl;
+    maxClientObject++;
+    return maxClientObject-1;
+    // what if this overflows?
 }
+
+void GameState::addEntity(Entity* entity)
+{
+    return;
+}
+
 
 void GameState::update(float dt)
 {
-    for ( std::vector<Entity*>::iterator it = m_entities.begin(); it != m_entities.end();)
-    {
-        (*it)->update(dt);
-        if ( (*it)->isDead() ){
-            std::cout<<"ERASED ENTITY"<<std::endl;
-            delete (*it);
-            it = m_entities.erase(it);
+    // Client objects
+    for ( sf::Uint16 i = MAX_SERVER_OBJECTS; i < maxClientObject; i++ ){
+        if ( m_objects[i] != 0 ){
+            m_objects[i]->update(dt);
+            if ( m_objects[i]->isDead() ){
+                delete m_objects[i];
+                m_objects[i] = 0;
+            }
         }
-        else
-            ++it;
     }
-
-    while ( ps_entities.size() )
-    {
-        m_entities.push_back ( ps_entities.back() );
-        ps_entities.pop_back();
+    // Server objects
+    for ( sf::Uint16 i = 0; i < maxServerObject; i++ ){
+        if ( m_objects[i] != 0 ){
+            m_objects[i]->update(dt);
+            if ( m_objects[i]->isDead() ){
+                delete m_objects[i];
+                m_objects[i] = 0;
+            }
+        }
     }
 }
 
 void GameState::input( const sf::Event & event )
 {
     //SyncManager::input(event);
-
     //emeraldo->input( event );
 }
 
 void GameState::draw()
 {
-    // These values might be NULLs - implement NULL guards
-
-    /*
-    if ( SyncManager::myPlayerID != -1 ){ // need better function for this checking
-        if ( SyncManager::crystals[SyncManager::myPlayerID] != NULL ){ // need better function for this checking
-            Display::focusOn(SyncManager::crystals[SyncManager::myPlayerID]);
-        }
-    }
-    */
-
-    //Crystal * viewTarget = 0;
-    /*
-    if ( SyncManager::myPlayerID != -1 ){ // need better function for this checking
-        if ( SyncManager::crystals[SyncManager::myPlayerID] != NULL ){ // need better function for this checking
-            //Display::focusOn(SyncManager::crystals[SyncManager::myPlayerID]);
-            viewTarget = SyncManager::crystals[SyncManager::myPlayerID];
-        }
-    }
-    if ( !viewTarget ){
-        for ( int i = 0; i < MAX_PLAYERS; i++ ){
-            if ( SyncManager::crystals[i] ){
-                viewTarget = SyncManager::crystals[i];
-                break;
-            }
-        }
-    }*/
-
-    //Display::focusOn(viewTarget);
-
-    //Display::focusOn(myObject);
-
     Display::window->draw(arena);
     Display::window->draw(circle);
-    for ( std::vector<Entity*>::iterator it = m_entities.begin(); it != m_entities.end(); ++it )
-    {
-        (*it)->draw();
+
+    // Client objects
+    for ( sf::Uint16 i = MAX_SERVER_OBJECTS; i < maxClientObject; i++ ){
+        if ( m_objects[i] != 0 ){
+            m_objects[i]->draw();
+        }
+    }
+    // Server objects
+    for ( sf::Uint16 i = 0; i < maxServerObject; i++ ){
+        if ( m_objects[i] != 0 ){
+            m_objects[i]->draw();
+        }
     }
 }
