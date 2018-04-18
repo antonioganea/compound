@@ -73,6 +73,7 @@ void GameState::update(float dt)
             if ( m_objects[i]->isDead() ){
                 delete m_objects[i];
                 m_objects[i] = 0;
+                std::cout << "Deleted client object!" << std::endl;
             }
         }
     }

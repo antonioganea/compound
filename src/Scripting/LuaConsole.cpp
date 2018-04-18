@@ -39,7 +39,111 @@ int l_SetPosition(lua_State* L) {
     x = lua_tonumber(L,-2);
     y = lua_tonumber(L,-1);
 
-    StageManager::gameState->getObject(objectID)->setPosition(x,y);
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->setPosition(x,y);
+    }
+
+
+    return 0;
+}
+
+// SetVelocity( object, x, y )
+int l_SetVelocity(lua_State* L) {
+
+    int objectID;
+    float x,y;
+
+    if ( luaL_checkinteger(L,-3) ){
+        objectID = lua_tonumber(L,-3);
+    }
+
+    x = lua_tonumber(L,-2);
+    y = lua_tonumber(L,-1);
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->setVelocity(x,y);
+    }
+
+
+    return 0;
+}
+
+// SetRotation( object, rot )
+int l_SetRotation(lua_State* L) {
+
+    int objectID;
+    float rot;
+
+    if ( luaL_checkinteger(L,-2) ){
+        objectID = lua_tonumber(L,-2);
+    }
+
+    rot = lua_tonumber(L,-1);
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->setRotation(rot);
+    }
+
+
+    return 0;
+}
+
+// SetFriction( object, friction )
+int l_SetFriction(lua_State* L) {
+
+    int objectID;
+    float friction;
+
+    if ( luaL_checkinteger(L,-2) ){
+        objectID = lua_tonumber(L,-2);
+    }
+
+    friction = lua_tonumber(L,-1);
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->setFriction(friction);
+    }
+
+    return 0;
+}
+
+// SetTexture( object, textureID )
+int l_SetTexture(lua_State* L) {
+
+    int objectID;
+    sf::Uint16 textureID;
+
+    if ( luaL_checkinteger(L,-2) ){
+        objectID = lua_tonumber(L,-2);
+    }
+
+    textureID = lua_tonumber(L,-1);
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->setTextureID(textureID);
+    }
+
+    return 0;
+}
+
+// KillObject( object )
+int l_KillObject(lua_State* L) {
+
+    int objectID;
+
+    if ( luaL_checkinteger(L,-1) ){
+        objectID = lua_tonumber(L,-1);
+    }
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->kill();
+    }
 
     return 0;
 }
@@ -148,6 +252,20 @@ void LuaConsole::init(){
         lua_pushcfunction(state, l_CreateObject);
         lua_setglobal(state, "CreateObject");
 
+        lua_pushcfunction(state, l_SetFriction);
+        lua_setglobal(state, "SetFriction");
+
+        lua_pushcfunction(state, l_SetRotation);
+        lua_setglobal(state, "SetRotation");
+
+        lua_pushcfunction(state, l_SetVelocity);
+        lua_setglobal(state, "SetVelocity");
+
+        lua_pushcfunction(state, l_SetTexture);
+        lua_setglobal(state, "SetTexture");
+
+        lua_pushcfunction(state, l_KillObject);
+        lua_setglobal(state, "KillObject");
 
     }
 }
