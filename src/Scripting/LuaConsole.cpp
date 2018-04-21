@@ -41,8 +41,11 @@ int l_SetPosition(lua_State* L) {
     y = lua_tonumber(L,-1);
 
     Object * obj = StageManager::gameState->getObject(objectID);
+    //std::cout << "getObject : " << obj << std::endl;
     if ( obj != 0 ){
-        obj->setPosition(x,y);
+        sf::Packet newPacket = obj->setPosition(x,y);
+        if ( obj->getSynced() )
+            SyncManager::sendTCPMessage( newPacket );
     }
 
 
@@ -64,7 +67,9 @@ int l_SetVelocity(lua_State* L) {
 
     Object * obj = StageManager::gameState->getObject(objectID);
     if ( obj != 0 ){
-        obj->setVelocity(x,y);
+        sf::Packet newPacket = obj->setVelocity(x,y);
+        if ( obj->getSynced() )
+            SyncManager::sendTCPMessage( newPacket );
     }
 
 
@@ -85,7 +90,9 @@ int l_SetRotation(lua_State* L) {
 
     Object * obj = StageManager::gameState->getObject(objectID);
     if ( obj != 0 ){
-        obj->setRotation(rot);
+        sf::Packet newPacket = obj->setRotation(rot);
+        if ( obj->getSynced() )
+            SyncManager::sendTCPMessage( newPacket );
     }
 
 
@@ -106,7 +113,9 @@ int l_SetFriction(lua_State* L) {
 
     Object * obj = StageManager::gameState->getObject(objectID);
     if ( obj != 0 ){
-        obj->setFriction(friction);
+        sf::Packet newPacket = obj->setFriction(friction);
+        if ( obj->getSynced() )
+            SyncManager::sendTCPMessage( newPacket );
     }
 
     return 0;
@@ -126,7 +135,9 @@ int l_SetTexture(lua_State* L) {
 
     Object * obj = StageManager::gameState->getObject(objectID);
     if ( obj != 0 ){
-        obj->setTextureID(textureID);
+        sf::Packet newPacket = obj->setTextureID(textureID);
+        if ( obj->getSynced() )
+            SyncManager::sendTCPMessage( newPacket );
     }
 
     return 0;
@@ -143,7 +154,9 @@ int l_KillObject(lua_State* L) {
 
     Object * obj = StageManager::gameState->getObject(objectID);
     if ( obj != 0 ){
-        obj->kill();
+        sf::Packet newPacket = obj->kill();
+        if ( obj->getSynced() )
+            SyncManager::sendTCPMessage( newPacket );
     }
 
     return 0;
@@ -161,9 +174,9 @@ int l_RegisterAsServerObject(lua_State* L) {
     std::cout << objectID << std::endl;
 
     Object * obj = StageManager::gameState->getObject(objectID);
-    std::cout << obj << std::endl;
+    //std::cout << obj << std::endl;
     if ( obj != 0 ){
-            std::cout << "REGISTERING" << std::endl;
+        //std::cout << "REGISTERING" << std::endl;
         SyncManager::registerObjectToServer( obj );
     }
 
@@ -174,7 +187,6 @@ int l_RegisterAsServerObject(lua_State* L) {
 int l_CreateObject(lua_State* L){
     Object * newObject = new Object();
     sf::Uint16 id = StageManager::gameState->registerClientObject( newObject );
-
     lua_pushnumber( L, id );
 
     return 1;
@@ -198,8 +210,43 @@ int l_RegisterServerEvent(lua_State* L) {
 int l_TriggerServerEvent(lua_State* L) {
 
     char eventName[256];
-    strcpy(eventName,lua_tostring(L,-1));
-    SyncManager::triggerServerEvent(eventName);
+    strcpy(eventName,lua_tostring(L,1));
+
+    int args = lua_gettop(L);
+
+    if ( args == 1){
+        SyncManager::triggerServerEvent(eventName);
+    }else{
+        sf::Packet newPacket;
+
+        float floatBuffer;
+        char stringBuffer[256];
+
+        sf::Uint16 eventCode = SyncManager::getServerEventCode(eventName);
+        newPacket << eventCode;
+        sf::Uint8 encoding = 0;
+        sf::Uint8 index = 1;
+        for ( int i = 2; i <= args; i++ ){
+            if ( !lua_isnumber(L,i) ){//0 for numbers, 1 for strings
+                encoding = encoding | index;
+            }
+            index = index << 1;
+        }
+
+        newPacket << encoding;
+        for ( int i = 2; i <= args; i++ ){
+            if ( lua_isnumber(L,i) ){
+                floatBuffer = lua_tonumber(L,i);
+                newPacket << floatBuffer;
+            }else{
+                strcpy(stringBuffer,lua_tostring(L,i));
+                newPacket << stringBuffer;
+            }
+        }
+
+        SyncManager::sendTCPMessage(newPacket);
+
+    }
 
     return 0;
 }
@@ -291,6 +338,9 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_RegisterAsServerObject);
         lua_setglobal(state, "RegisterAsServerObject");
+
+        lua_pushcfunction(state, l_TriggerServerEvent);
+        lua_setglobal(state, "TriggerServerEvent");
 
 
 

@@ -38,6 +38,9 @@ class SyncManager
         static void sendTCPMessage( const char * buffer, size_t size );
         static void sendUDPMessage( const char * buffer, size_t size );
 
+        static void sendTCPMessage( sf::Packet packetToSend );
+        static void sendUDPMessage( sf::Packet packetToSend );
+
         static void receivePackets();
         static void parseBuffer();
 
@@ -59,6 +62,8 @@ class SyncManager
         static void registerClientEvent( const char * eventName, sf::Uint16 id );
 
         static void registerObjectToServer( Object * obj );
+
+        static sf::Uint16 getServerEventCode( const char * eventName );
     protected:
 
     private:

@@ -46,17 +46,25 @@ bool Object::isDead(){
     return dead;
 }
 
-void Object::setPosition(const sf::Vector2f& position)
+sf::Packet Object::setPosition(const sf::Vector2f& position)
 {
     shape.setPosition(position);
     x = position.x;
     y = position.y;
+
+    sf::Packet newPacket;
+    newPacket << SHARED_POSITION << serverID << x << y;
+    return newPacket;
 }
 
-void Object::setPosition(const float _x, const float _y){
+sf::Packet Object::setPosition(const float _x, const float _y){
     x = _x;
     y = _y;
     shape.setPosition(x,y);
+
+    sf::Packet newPacket;
+    newPacket << SHARED_POSITION << serverID << x << y;
+    return newPacket;
 }
 
 sf::Vector2f Object::getPosition(){
@@ -69,20 +77,28 @@ void Object::getPosition(float& _x, float& _y)
     _y = y;
 }
 
-void Object::kill(){
+sf::Packet Object::kill(){
     dead = true;
+
+    sf::Packet newPacket;
+    newPacket << SHARED_KILL << serverID;
+    return newPacket;
 }
 
-void Object::setRotation(float rot){
+sf::Packet Object::setRotation(float rot){
     rotation = rot;
     shape.setRotation(rot);
+
+    sf::Packet newPacket;
+    newPacket << SHARED_ROTATION << serverID << rot;
+    return newPacket;
 }
 
 float Object::getRotation(){
     return rotation;
 }
 
-void Object::setTextureID(sf::Uint16 id){
+sf::Packet Object::setTextureID(sf::Uint16 id){
     textureID = id;
 
     //Temporary checking it with colors instead of textures
@@ -108,15 +124,32 @@ void Object::setTextureID(sf::Uint16 id){
         break;
     }
     shape.setFillColor(color);
+
+    sf::Packet newPacket;
+    newPacket << SHARED_TEXTUREID << serverID << textureID;
+    return newPacket;
 }
 
 sf::Uint16 Object::getTextureID(){
     return textureID;
 }
 
-void Object::setVelocity(const float velx, const float vely){
+sf::Packet Object::setVelocity( const sf::Vector2f& velocity ){
+    vx = velocity.x;
+    vy = velocity.y;
+
+    sf::Packet newPacket;
+    newPacket << SHARED_VELOCITY << serverID << vx << vy;
+    return newPacket;
+}
+
+sf::Packet Object::setVelocity(const float velx, const float vely){
     vx = velx;
     vy = vely;
+
+    sf::Packet newPacket;
+    newPacket << SHARED_VELOCITY << serverID << vx << vy;
+    return newPacket;
 }
 
 sf::Vector2f Object::getVelocity(){
@@ -131,8 +164,12 @@ void Object::getVelocity(float& velx, float& vely){
     vely = vy;
 }
 
-void Object::setFriction(float fric){
+sf::Packet Object::setFriction(float fric){
     friction = fric;
+
+    sf::Packet newPacket;
+    newPacket << SHARED_FRICTION << serverID << friction;
+    return newPacket;
 }
 
 float Object::getFriction(){

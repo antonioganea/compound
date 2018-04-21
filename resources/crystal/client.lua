@@ -1,10 +1,13 @@
 print("Script loaded - green circle");
 
-local myObject = CreateObject()
-SetPosition ( myObject, 500, 500 )
-SetFriction ( myObject, 0.1 )
+--local myObject = CreateObject()
+--SetPosition ( myObject, 500, 500 )
+--SetFriction ( myObject, 0.1 )
 
-RegisterAsServerObject( myObject )
+--RegisterAsServerObject( myObject )
+
+local myObject = CreateObject()
+SetPosition( myObject, 560, 500 )
 
 print("loaded!")
 

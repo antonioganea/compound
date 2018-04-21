@@ -38,6 +38,10 @@ Object * GameState::getObject( sf::Uint16 objectID ){
     return m_objects[objectID];
 }
 
+Object * GameState::getObjectByServerID( sf::Uint16 serverID ){
+    return m_objectsByServerID[serverID];
+}
+
 sf::Uint16 GameState::registerClientObject( Object * object ){
     for ( sf::Uint16 i = 0; i < maxClientObject; i++ ){
         if ( m_objects[i] == 0 ){

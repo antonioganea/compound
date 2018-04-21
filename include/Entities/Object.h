@@ -18,24 +18,25 @@ class Object : public Entity
         void update( float dt );
         bool isDead();
 
-        void setPosition ( const sf::Vector2f& position );
-        void setPosition ( const float x, const float y );
+        sf::Packet setPosition ( const sf::Vector2f& position );
+        sf::Packet setPosition ( const float x, const float y );
         sf::Vector2f getPosition();
         void getPosition( float & x, float & y );
 
-        void kill();
+        sf::Packet kill();
 
-        void setRotation( float rot );
+        sf::Packet setRotation( float rot );
         float getRotation();
 
-        void setTextureID( sf::Uint16 id );
+        sf::Packet setTextureID( sf::Uint16 id );
         sf::Uint16 getTextureID();
 
-        void setVelocity ( const float velx, const float vely );
+        sf::Packet setVelocity ( const sf::Vector2f& velocity );
+        sf::Packet setVelocity ( const float velx, const float vely );
         sf::Vector2f getVelocity();
         void getVelocity( float & velx, float & vely );
 
-        void setFriction( float fric );
+        sf::Packet setFriction( float fric );
         float getFriction();
 
         /** Generates a packet that contains all the object's data */

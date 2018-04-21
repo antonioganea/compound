@@ -29,6 +29,7 @@ class GameState : public Stage
         sf::RectangleShape arena;
 
         Object * getObject( sf::Uint16 objectID );
+        Object * getObjectByServerID( sf::Uint16 serverID );
 
         void bindServerIDtoClientObject( sf::Uint16 serverID, sf::Uint16 clientID );
 

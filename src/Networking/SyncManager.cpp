@@ -83,6 +83,16 @@ void SyncManager::sendUDPMessage( const char* buffer, size_t size ){
     SyncManager::udpSocket.send( buffer, size, SyncManager::address, SyncManager::serverPort );
 }
 
+void SyncManager::sendTCPMessage(sf::Packet packetToSend){
+    SyncManager::tcpSocket.send( packetToSend );
+}
+
+void SyncManager::sendUDPMessage(sf::Packet packetToSend){
+    SyncManager::udpSocket.send( packetToSend, SyncManager::address, SyncManager::serverPort );
+}
+
+
+
 void SyncManager::triggerServerEvent( const char * eventName ){
     sf::Packet packet;
     //packet << events[ eventName ];
@@ -101,6 +111,18 @@ void SyncManager::triggerServerEvent( const char * eventName ){
     else{
         std::cout << "ERROR : Packet not sent, Event not found : "  << eventName << std::endl;
     }
+}
+
+sf::Uint16 SyncManager::getServerEventCode( const char * eventName ){
+    sf::Uint16 eventCode = 0;
+
+    std::map<std::string,sf::Uint16,strless>::iterator it;
+    it = serverEvents.find(eventName);
+    if (it != serverEvents.end()){
+        eventCode = it->second;
+        return eventCode;
+    }
+    return eventCode;
 }
 void SyncManager::registerServerEvent( const char* eventName, sf::Uint16 id )
 {
@@ -268,6 +290,101 @@ void SyncManager::parseBuffer(){
 
             break;
         }
+
+        /*
+        #define SHARED_POSITION (sf::Uint16)8
+        #define SHARED_VELOCITY (sf::Uint16)9
+        #define SHARED_FRICTION (sf::Uint16)10
+        #define SHARED_ROTATION (sf::Uint16)11
+        #define SHARED_TEXTUREID (sf::Uint16)12
+        #define SHARED_KILL (sf::Uint16)13
+
+        #define C_SINGLE_OBJECT (sf::Uint16)14
+        */
+        case C_SINGLE_OBJECT:{
+            //newPacket << C_SINGLE_OBJECT << serverID << x << y << vx << vy << friction << rotation << textureID;
+
+            sf::Uint16 serverID, textureID;
+            float x,y,vx,vy,friction,rotation;
+
+            receivePacket >> serverID >> x >> y >> vx >> vy >> friction >> rotation >> textureID;
+
+            Object * newObject = new Object();
+            newObject->setPosition(x,y);
+            newObject->setVelocity(vx,vy);
+            newObject->setFriction(friction);
+            newObject->setRotation(rotation);
+            newObject->setTextureID(textureID);
+            newObject->setServerID( serverID );
+            newObject->setSynced(true);
+
+            sf::Uint16 clientID = StageManager::gameState->registerClientObject( newObject );
+            StageManager::gameState->bindServerIDtoClientObject( serverID, clientID );
+
+            break;
+        }
+
+    case SHARED_POSITION:{
+            sf::Uint16 serverID;
+            float x,y;
+            receivePacket >> serverID >> x >> y;
+            Object * obj = StageManager::gameState->getObjectByServerID(serverID);
+            //std::cout << "POSITION : " << serverID << ' ' << x << ' ' << y << std::endl;
+            if ( obj != 0 ){
+                obj -> setPosition(x,y);
+            }
+            break;
+        }
+        case SHARED_VELOCITY:{
+            sf::Uint16 serverID;
+            float vx,vy;
+            receivePacket >> serverID >> vx >> vy;
+            Object * obj = StageManager::gameState->getObjectByServerID(serverID);
+            if ( obj != 0 ){
+                obj -> setVelocity(vx,vy);
+            }
+            break;
+        }
+        case SHARED_FRICTION:{
+            sf::Uint16 serverID;
+            float friction;
+            receivePacket >> serverID >> friction;
+            Object * obj = StageManager::gameState->getObjectByServerID(serverID);
+            if ( obj != 0 ){
+                obj -> setFriction(friction);
+            }
+            break;
+        }
+        case SHARED_ROTATION:{
+            sf::Uint16 serverID;
+            float rotation;
+            receivePacket >> serverID >> rotation;
+            Object * obj = StageManager::gameState->getObjectByServerID(serverID);
+            if ( obj != 0 ){
+                obj -> setRotation(rotation);
+            }
+            break;
+        }
+        case SHARED_TEXTUREID:{
+            sf::Uint16 serverID;
+            sf::Uint16 textureID;
+            receivePacket >> serverID >> textureID;
+            Object * obj = StageManager::gameState->getObjectByServerID(serverID);
+            if ( obj != 0 ){
+                obj -> setTextureID(textureID);
+            }
+            break;
+        }
+        case SHARED_KILL:{
+            sf::Uint16 serverID;
+            receivePacket >> serverID;
+            Object * obj = StageManager::gameState->getObjectByServerID(serverID);
+            if ( obj != 0 ){
+                obj -> kill();
+            }
+            break;
+        }
+
 
     }
 
