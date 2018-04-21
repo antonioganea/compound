@@ -9,6 +9,8 @@
 
 #define MAX_PLAYERS 16
 
+#include "Object.h"
+
 class strless {
    public:
       bool operator() (const std::string & first, const std::string & second ) const  {
@@ -56,6 +58,7 @@ class SyncManager
         static void requestClientEvent( const char * eventName );
         static void registerClientEvent( const char * eventName, sf::Uint16 id );
 
+        static void registerObjectToServer( Object * obj );
     protected:
 
     private:

@@ -1,0 +1,21 @@
+#ifndef EVENTS_H_INCLUDED
+#define EVENTS_H_INCLUDED
+
+#define S_REQUEST_SERVER_EVENTS (sf::Uint16)1
+#define C_SEND_SERVER_EVENTS (sf::Uint16)1
+#define S_REGISTER_CLIENT_EVENT (sf::Uint16)2
+#define C_CLIENT_EVENT_ACKNOWLEDGEMENT (sf::Uint16)2
+
+#define S_REQUEST_REGISTER_OBJECT (sf::Uint16)7
+#define C_REGISTRATION_CODE (sf::Uint16)7
+
+#define SHARED_POSITION (sf::Uint16)8
+#define SHARED_VELOCITY (sf::Uint16)9
+#define SHARED_FRICTION (sf::Uint16)10
+#define SHARED_ROTATION (sf::Uint16)11
+#define SHARED_TEXTUREID (sf::Uint16)12
+#define SHARED_KILL (sf::Uint16)13
+
+#define C_SINGLE_OBJECT (sf::Uint16)14
+
+#endif // EVENTS_H_INCLUDED

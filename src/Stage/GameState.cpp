@@ -8,8 +8,6 @@
 
 #include "Object.h"
 
-//Object * myObject;
-
 GameState::GameState()
 {
     //allocate object containers
@@ -29,9 +27,6 @@ GameState::GameState()
     circle.setOutlineThickness(5);
     circle.setOrigin(2500,2500);
     circle.setPosition(0,0);
-
-    //myObject = new Object();
-    //registerClientObject(myObject);
 }
 
 GameState::~GameState()
@@ -44,46 +39,35 @@ Object * GameState::getObject( sf::Uint16 objectID ){
 }
 
 sf::Uint16 GameState::registerClientObject( Object * object ){
-    for ( sf::Uint16 i = MAX_SERVER_OBJECTS; i < maxClientObject; i++ ){
+    for ( sf::Uint16 i = 0; i < maxClientObject; i++ ){
         if ( m_objects[i] == 0 ){
             m_objects[i] = object;
+            object->setClientID(i);
             std::cout << "Added client object to gamestate! id : " << i << std::endl;
             return i;
         }
     }
     m_objects[maxClientObject] = object;
+    object->setClientID(maxClientObject);
     std::cout << "Added client object to gamestate! id : " << maxClientObject << std::endl;
     maxClientObject++;
     return maxClientObject-1;
     // what if this overflows?
 }
 
-void GameState::addEntity(Entity* entity)
-{
+void GameState::addEntity(Entity* entity){
     return;
 }
 
 
-void GameState::update(float dt)
-{
-    // Client objects
-    for ( sf::Uint16 i = MAX_SERVER_OBJECTS; i < maxClientObject; i++ ){
+void GameState::update(float dt){
+    for ( sf::Uint16 i = 0; i < MAX_OBJECTS; i++ ){
         if ( m_objects[i] != 0 ){
             m_objects[i]->update(dt);
             if ( m_objects[i]->isDead() ){
                 delete m_objects[i];
                 m_objects[i] = 0;
-                std::cout << "Deleted client object!" << std::endl;
-            }
-        }
-    }
-    // Server objects
-    for ( sf::Uint16 i = 0; i < maxServerObject; i++ ){
-        if ( m_objects[i] != 0 ){
-            m_objects[i]->update(dt);
-            if ( m_objects[i]->isDead() ){
-                delete m_objects[i];
-                m_objects[i] = 0;
+                std::cout << "Deleted object!" << std::endl;
             }
         }
     }
@@ -100,16 +84,14 @@ void GameState::draw()
     Display::window->draw(arena);
     Display::window->draw(circle);
 
-    // Client objects
-    for ( sf::Uint16 i = MAX_SERVER_OBJECTS; i < maxClientObject; i++ ){
+    for ( sf::Uint16 i = 0; i < MAX_OBJECTS; i++ ){
         if ( m_objects[i] != 0 ){
             m_objects[i]->draw();
         }
     }
-    // Server objects
-    for ( sf::Uint16 i = 0; i < maxServerObject; i++ ){
-        if ( m_objects[i] != 0 ){
-            m_objects[i]->draw();
-        }
-    }
+}
+
+
+void GameState::bindServerIDtoClientObject(sf::Uint16 serverID, sf::Uint16 clientID){
+    m_objectsByServerID[serverID] = m_objects[clientID];
 }

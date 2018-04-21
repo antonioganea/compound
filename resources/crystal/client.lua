@@ -1,5 +1,14 @@
 print("Script loaded - green circle");
 
+local myObject = CreateObject()
+SetPosition ( myObject, 500, 500 )
+SetFriction ( myObject, 0.1 )
+
+RegisterAsServerObject( myObject )
+
+print("loaded!")
+
+--[[
 local speed = 10
 
 local myObject = CreateObject()
@@ -11,13 +20,12 @@ SetPosition( myObject2, 500, 500 )
 local x = 100
 local y = 100
 
---[[
-W - 22
-A - 0
-S - 18
-D - 3
-X - 23
-]]
+-- W - 22
+-- A - 0
+-- S - 18
+-- D - 3
+-- X - 23
+
 
 local color = 1
 
@@ -60,5 +68,4 @@ AddEventHandler( "onKeyPress", function( keyCode )
     end
 end
 )
-
-print("loaded!")
+]]

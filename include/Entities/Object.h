@@ -5,6 +5,8 @@
 #include <SFML/System/Vector2.hpp>
 #include "Entity.h"
 
+#include <SFML/Network/Packet.hpp>
+
 
 class Object : public Entity
 {
@@ -35,10 +37,24 @@ class Object : public Entity
 
         void setFriction( float fric );
         float getFriction();
+
+        /** Generates a packet that contains all the object's data */
+        sf::Packet generateObjectPacket();
+
+        void setServerID( sf::Uint16 value );
+        void setClientID( sf::Uint16 value );
+        sf::Uint16 getServerID();
+        sf::Uint16 getClientID();
+
+        void setSynced( bool value );
+        bool getSynced();
+
     protected:
 
     private:
         sf::CircleShape shape;
+
+        sf::Uint16 clientID, serverID;
 
         sf::Uint16 textureID;
         float x,y;
@@ -46,6 +62,7 @@ class Object : public Entity
         float rotation;
         float friction;
         bool dead;
+        bool synced;
 };
 
 #endif // OBJECT_H

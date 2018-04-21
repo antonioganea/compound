@@ -65,6 +65,7 @@
 		<Unit filename="include/Gui/GuiElement.h" />
 		<Unit filename="include/Gui/GuiLabel.h" />
 		<Unit filename="include/Gui/HealthBar.h" />
+		<Unit filename="include/Networking/Events.h" />
 		<Unit filename="include/Networking/SyncManager.h" />
 		<Unit filename="include/Registry/GameRegistry.h" />
 		<Unit filename="include/Scripting/LuaConsole.h" />

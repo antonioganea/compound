@@ -12,7 +12,7 @@
 #define MAX_SERVER_OBJECTS 1024
 
 // Maximum number of clientside objects ( non-sync'd )
-#define MAX_CLIENT_OBJECTS 1024
+#define MAX_OBJECTS 1024
 
 class GameState : public Stage
 {
@@ -30,19 +30,16 @@ class GameState : public Stage
 
         Object * getObject( sf::Uint16 objectID );
 
+        void bindServerIDtoClientObject( sf::Uint16 serverID, sf::Uint16 clientID );
+
     protected:
 
     private:
-        //Object * m_serverObjects[MAX_SERVER_OBJECTS];
-        //Object * m_clientObjects[MAX_CLIENT_OBJECTS];
+        Object * m_objects[MAX_OBJECTS];
+        Object * m_objectsByServerID[MAX_SERVER_OBJECTS];
 
-        // One contiguous pointer to entity vector ensures that each entity has a unique id
-        // So there isn't any synced object with the same id as a non-synced object
-        // Server objects go first, client objects go second, because the server just stores the first part
-        Object * m_objects[MAX_SERVER_OBJECTS+MAX_CLIENT_OBJECTS];
-
-        sf::Uint16 maxServerObject = 0;
-        sf::Uint16 maxClientObject = MAX_SERVER_OBJECTS;
+        int maxClientObject = 0;
+        int maxServerObject = 0;
 };
 
 #endif // GAMESTATE_H

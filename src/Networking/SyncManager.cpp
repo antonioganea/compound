@@ -5,6 +5,9 @@
 #include <string.h>
 #include <iostream>
 
+#include "Events.h"
+#include "LuaConsole.h"
+
 
 sf::TcpSocket SyncManager::tcpSocket;
 sf::UdpSocket SyncManager::udpSocket;
@@ -205,6 +208,15 @@ void SyncManager::requestClientEvent(const char* eventName){
     std::cout << "Requested client event " << eventName << std::endl;
 }
 
+void SyncManager::registerObjectToServer(Object* obj){
+    sf::Packet newPacket;
+    newPacket = obj->generateObjectPacket();
+    SyncManager::tcpSocket.send(newPacket);
+
+    std::cout << "Sent client object registration packet to server on id " << obj->getClientID() << std::endl;
+}
+
+
 void SyncManager::registerClientEvent(const char* eventName, sf::Uint16 id){
     clientEvents[eventName] = id;
     std::cout << "Registered client event " << eventName << " " << id << std::endl;
@@ -224,20 +236,37 @@ void SyncManager::parseBuffer(){
     printf("%d ",packetCode);
 
     switch ( packetCode ){
-        case 1:{ // Server Events
+        case C_SEND_SERVER_EVENTS:{ // Server Events
             std::string eventName;
             sf::Uint16 eventCode;
             while ( !receivePacket.endOfPacket() ){
                 receivePacket >> eventName >> eventCode;
                 registerServerEvent(eventName.c_str(),eventCode);
             }
+
+            LuaConsole::execute("resources/crystal/client.lua"); // TODO : move this in proper event
             break;
         }
-        case 2:{ // Client Events
+        case C_CLIENT_EVENT_ACKNOWLEDGEMENT:{ // Client Events
             std::string eventName;
             sf::Uint16 eventCode;
             receivePacket >> eventName >> eventCode;
             registerClientEvent(eventName.c_str(),eventCode);
+            break;
+        }
+        case C_REGISTRATION_CODE:{
+            //C_REGISTRATION_CODE << clientID << serverID;
+            sf::Uint16 clientID, serverID;
+            receivePacket >> clientID >> serverID;
+
+            Object * obj = StageManager::gameState->getObject(clientID);
+            obj->setServerID(serverID);
+            obj->setSynced(true);
+            StageManager::gameState->bindServerIDtoClientObject(serverID,clientID);
+
+            std::cout << "Client object " << clientID << " is now synced with serverID " << serverID << std::endl;
+
+            break;
         }
 
     }

@@ -2,6 +2,8 @@
 
 #include "Display.h"
 
+#include "Events.h"
+
 Object::Object(){
     //ctor
     shape.setFillColor(sf::Color::Green);
@@ -11,9 +13,11 @@ Object::Object(){
 
     shape.setOrigin(30,30);
 
+    serverID = clientID = 0;
     textureID = 0;
     x = y = vx = vy = rotation = friction = 0.f;
     dead = false;
+    synced = false;
 }
 
 Object::~Object(){
@@ -134,3 +138,34 @@ void Object::setFriction(float fric){
 float Object::getFriction(){
     return friction;
 }
+
+sf::Packet Object::generateObjectPacket(){
+    sf::Packet newPacket;
+    newPacket << S_REQUEST_REGISTER_OBJECT << clientID << x << y << vx << vy << friction << rotation << textureID;
+    return newPacket;
+}
+
+void Object::setServerID(sf::Uint16 value){
+    serverID = value;
+}
+
+void Object::setClientID(sf::Uint16 value){
+    clientID = value;
+}
+
+sf::Uint16 Object::getServerID(){
+    return serverID;
+}
+
+sf::Uint16 Object::getClientID(){
+    return clientID;
+}
+
+void Object::setSynced(bool value){
+    synced = value;
+}
+
+bool Object::getSynced(){
+    return synced;
+}
+

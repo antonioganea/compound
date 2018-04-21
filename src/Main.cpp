@@ -43,7 +43,6 @@ int main(){
     circle.setFillColor(sf::Color::Green);
 
     LuaConsole::init();
-    LuaConsole::execute("resources/crystal/client.lua");
 
     SyncManager::connectToServer(sf::IpAddress("127.0.0.1"));
 

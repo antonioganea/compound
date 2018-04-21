@@ -4,6 +4,8 @@
 #include "SyncManager.h"
 #include <string.h>
 
+#include <iostream>
+
 
 lua_State * LuaConsole::state = NULL;
 
@@ -28,8 +30,7 @@ int l_my_print(lua_State* L) {
 
 // SetPosition( object, x, y )
 int l_SetPosition(lua_State* L) {
-
-    int objectID;
+    sf::Uint16 objectID;
     float x,y;
 
     if ( luaL_checkinteger(L,-3) ){
@@ -51,7 +52,7 @@ int l_SetPosition(lua_State* L) {
 // SetVelocity( object, x, y )
 int l_SetVelocity(lua_State* L) {
 
-    int objectID;
+    sf::Uint16 objectID;
     float x,y;
 
     if ( luaL_checkinteger(L,-3) ){
@@ -73,7 +74,7 @@ int l_SetVelocity(lua_State* L) {
 // SetRotation( object, rot )
 int l_SetRotation(lua_State* L) {
 
-    int objectID;
+    sf::Uint16 objectID;
     float rot;
 
     if ( luaL_checkinteger(L,-2) ){
@@ -94,7 +95,7 @@ int l_SetRotation(lua_State* L) {
 // SetFriction( object, friction )
 int l_SetFriction(lua_State* L) {
 
-    int objectID;
+    sf::Uint16 objectID;
     float friction;
 
     if ( luaL_checkinteger(L,-2) ){
@@ -114,7 +115,7 @@ int l_SetFriction(lua_State* L) {
 // SetTexture( object, textureID )
 int l_SetTexture(lua_State* L) {
 
-    int objectID;
+    sf::Uint16 objectID;
     sf::Uint16 textureID;
 
     if ( luaL_checkinteger(L,-2) ){
@@ -134,7 +135,7 @@ int l_SetTexture(lua_State* L) {
 // KillObject( object )
 int l_KillObject(lua_State* L) {
 
-    int objectID;
+    sf::Uint16 objectID;
 
     if ( luaL_checkinteger(L,-1) ){
         objectID = lua_tonumber(L,-1);
@@ -143,6 +144,27 @@ int l_KillObject(lua_State* L) {
     Object * obj = StageManager::gameState->getObject(objectID);
     if ( obj != 0 ){
         obj->kill();
+    }
+
+    return 0;
+}
+
+// RegisterAsServerObject( object )
+int l_RegisterAsServerObject(lua_State* L) {
+    std::cout << "Register as server object" << std::endl;
+    sf::Uint16 objectID;
+
+    if ( luaL_checkinteger(L,-1) ){
+        objectID = lua_tonumber(L,-1);
+    }
+
+    std::cout << objectID << std::endl;
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    std::cout << obj << std::endl;
+    if ( obj != 0 ){
+            std::cout << "REGISTERING" << std::endl;
+        SyncManager::registerObjectToServer( obj );
     }
 
     return 0;
@@ -266,6 +288,11 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_KillObject);
         lua_setglobal(state, "KillObject");
+
+        lua_pushcfunction(state, l_RegisterAsServerObject);
+        lua_setglobal(state, "RegisterAsServerObject");
+
+
 
     }
 }
