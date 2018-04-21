@@ -64,6 +64,7 @@ class SyncManager
         static void registerObjectToServer( Object * obj );
 
         static sf::Uint16 getServerEventCode( const char * eventName );
+        static std::string getClientEventName( sf::Uint16 eventCode );
     protected:
 
     private:

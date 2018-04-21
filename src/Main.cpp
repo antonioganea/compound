@@ -66,6 +66,7 @@ int main(){
         SyncManager::receivePackets();
 
         StageManager::update(10.f);
+        LuaConsole::triggerUpdateEvent();
 
         Display::window->clear();
         StageManager::draw();

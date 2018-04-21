@@ -71,7 +71,7 @@ void SyncManager::connectToServer( const sf::IpAddress& _address ){
     SyncManager::requestServerEvents();
 
     //Let's allocate a client event
-    SyncManager::requestClientEvent("beemo:pineapple");
+    //SyncManager::requestClientEvent("beemo:pineapple");
 }
 
 
@@ -124,6 +124,19 @@ sf::Uint16 SyncManager::getServerEventCode( const char * eventName ){
     }
     return eventCode;
 }
+
+std::string SyncManager::getClientEventName(sf::Uint16 eventCode){
+    std::string mystr = "";
+    for ( std::map<std::string,sf::Uint16,strless>::const_iterator i = clientEvents.begin(); i != clientEvents.end(); ++i ) {
+        if ( i->second == eventCode ){
+            mystr = i->first;
+            return mystr;
+        }
+    }
+    return mystr;
+}
+
+
 void SyncManager::registerServerEvent( const char* eventName, sf::Uint16 id )
 {
     //hashmap.add(eventname,id);
@@ -383,6 +396,12 @@ void SyncManager::parseBuffer(){
                 obj -> kill();
             }
             break;
+        }
+
+        default:{
+            if ( packetCode >= 500 ){
+                LuaConsole::triggerClientEvent(packetCode,receivePacket);
+            }
         }
 
 

@@ -296,6 +296,72 @@ void LuaConsole::triggerKeyPressEvent( sf::Uint16 key ){
     lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
 }
 
+void LuaConsole::triggerUpdateEvent(){
+    lua_pushstring(LuaConsole::state, "onFrame");
+    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);
+
+    if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
+        return;
+
+    //Now the function is on top of the stack
+    lua_call(LuaConsole::state,0,0);
+}
+
+void LuaConsole::triggerClientEvent( sf::Uint16 eventCode, sf::Packet restOfPacket ){
+    //std::cout << "DEBUG 1 " << std::endl;
+
+    std::string eventName = SyncManager::getClientEventName(eventCode);
+
+    if ( eventName != "" ){ // does it work like that with std::string and cstr?
+
+        //std::cout << "DEBUG 2 " << eventName << std::endl;
+
+        lua_pushstring(LuaConsole::state, eventName.c_str()); // push the event name
+        lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX); // retrieve the function
+
+        if ( ! lua_isnil(LuaConsole::state,-1) ){
+
+            //std::cout << "DEBUG 3 " << std::endl;
+
+            sf::Uint8 encoding;
+            restOfPacket >> encoding;
+            char index = 1;
+
+            float floatBuffer;
+            std::string stringBuffer;
+
+            int args = 0;
+
+            while ( !restOfPacket.endOfPacket() ){
+                if ( index & encoding ){ // 1 for string, 0 for number
+                    // string
+                    restOfPacket >> stringBuffer;
+                    lua_pushstring(LuaConsole::state,stringBuffer.c_str());
+                    std::cout << "Pushed a string : " << stringBuffer.c_str() << std::endl;
+                }else
+                {
+                    restOfPacket >> floatBuffer;
+                    lua_pushnumber(LuaConsole::state, floatBuffer);
+                    std::cout << "Pushed a float : " << floatBuffer << std::endl;
+                }
+
+                index = index << 1;
+                args++;
+            }
+
+            //std::cout << "DEBUG 4 " << std::endl;
+
+            std::cout << "args : " << args << std::endl;
+
+            //Now the function is below the args
+            lua_call(LuaConsole::state,args,0);
+        }
+        return;
+    }
+
+    std::cout << "No such event with code " << eventCode << std::endl;
+}
+
 
 void LuaConsole::init(){
     if ( state == NULL ){
@@ -309,8 +375,11 @@ void LuaConsole::init(){
         lua_pushcfunction(state, l_SetPosition);
         lua_setglobal(state, "SetPosition");
 
-        lua_pushcfunction(state, l_RegisterServerEvent);
-        lua_setglobal(state, "RegisterServerEvent");
+        //lua_pushcfunction(state, l_RegisterServerEvent);
+        //lua_setglobal(state, "RegisterServerEvent");
+
+        lua_pushcfunction(state, l_RegisterClientEvent);
+        lua_setglobal(state, "RegisterClientEvent");
 
         lua_pushcfunction(state, l_TriggerServerEvent);
         lua_setglobal(state, "TriggerServerEvent");
