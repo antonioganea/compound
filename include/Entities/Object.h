@@ -1,7 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include "Entity.h"
 
@@ -50,10 +50,13 @@ class Object : public Entity
         void setSynced( bool value );
         bool getSynced();
 
+        void setTexture( char * textureName );
+
     protected:
 
     private:
-        sf::CircleShape shape;
+        //sf::CircleShape shape;
+        sf::Sprite sprite;
 
         sf::Uint16 clientID, serverID;
 

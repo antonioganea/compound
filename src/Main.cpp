@@ -18,6 +18,7 @@
 #include "DebugLog.h"
 
 #include "LuaConsole.h"
+#include "Console.h"
 
 int main(){
     srand(time(NULL));
@@ -31,20 +32,15 @@ int main(){
     sf::View view;
 
     view.setSize( WINDOW_WIDTH, WINDOW_HEIGHT );
-/*
-    ///Debugging snippet///
-    SyncManager::connectToServer("127.0.0.1");
-    SyncManager::sendCrystalType(2); // Emeraldo
-    StageManager::pushStage(StageManager::gameState);
-    ///End of debugging snippet///
-*/
+
     sf::CircleShape circle;
     circle.setRadius(50.f);
     circle.setFillColor(sf::Color::Green);
 
     LuaConsole::init();
+    LuaConsole::executeLine("print('LUA LOADED')");
 
-    SyncManager::connectToServer(sf::IpAddress("127.0.0.1"));
+    //SyncManager::connectToServer(sf::IpAddress("127.0.0.1"));
 
     while (Display::window->isOpen()){
 
@@ -59,6 +55,15 @@ int main(){
                 if ( event.key.code == sf::Keyboard::Escape )
                     Display::window->close();
                 LuaConsole::triggerKeyPressEvent( event.key.code );
+            }
+            if (event.type == sf::Event::TextEntered ){
+                if ( !Console::getVisible() ){
+                    if( ( 'a' <= event.text.unicode && 'z' >= event.text.unicode ) ||
+                        ( 'A' <= event.text.unicode && 'Z' >= event.text.unicode ) ||
+                        ( '0' <= event.text.unicode && '9' >= event.text.unicode )
+                    )
+                    LuaConsole::triggerTypedEvent(event.text.unicode);
+                }
             }
             StageManager::input(event);
         }

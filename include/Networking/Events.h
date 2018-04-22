@@ -8,6 +8,8 @@
 #define S_REGISTER_CLIENT_EVENT static_cast<std::uint16_t>(2)
 #define C_CLIENT_EVENT_ACKNOWLEDGEMENT static_cast<std::uint16_t>(2)
 
+#define C_RUN_CLIENT_SCRIPTS static_cast<std::uint16_t>(6)
+
 #define S_REQUEST_REGISTER_OBJECT static_cast<std::uint16_t>(7)
 #define C_REGISTRATION_CODE static_cast<std::uint16_t>(7)
 

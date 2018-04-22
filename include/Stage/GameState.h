@@ -14,6 +14,9 @@
 // Maximum number of clientside objects ( non-sync'd )
 #define MAX_OBJECTS 1024
 
+#include "Label.h"
+#define MAX_LABELS 1024
+
 class GameState : public Stage
 {
     public:
@@ -33,6 +36,9 @@ class GameState : public Stage
 
         void bindServerIDtoClientObject( sf::Uint16 serverID, sf::Uint16 clientID );
 
+        Label * m_labels[MAX_LABELS];
+        sf::Uint16 addLabel( int x, int y, char * str );
+        void deleteLabel( sf::Uint16 id );
     protected:
 
     private:

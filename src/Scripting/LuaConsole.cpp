@@ -6,8 +6,11 @@
 
 #include <iostream>
 
+#include "Config.h"
+
 
 lua_State * LuaConsole::state = NULL;
+bool LuaConsole::triggerUpdate = false;
 
 
 //LUA print() redefinition
@@ -48,6 +51,27 @@ int l_SetPosition(lua_State* L) {
             SyncManager::sendTCPMessage( newPacket );
     }
 
+
+    return 0;
+}
+
+// GetPosition( object )
+int l_GetPosition(lua_State* L) {
+    sf::Uint16 objectID;
+
+    if ( luaL_checkinteger(L,-1) ){
+        objectID = lua_tonumber(L,-1);
+    }
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    //std::cout << "getObject : " << obj << std::endl;
+    if ( obj != 0 ){
+        float x, y;
+        obj->getPosition(x,y);
+        lua_pushnumber(L,x);
+        lua_pushnumber(L,y);
+        return 2;
+    }
 
     return 0;
 }
@@ -121,6 +145,7 @@ int l_SetFriction(lua_State* L) {
     return 0;
 }
 
+/*
 // SetTexture( object, textureID )
 int l_SetTexture(lua_State* L) {
 
@@ -138,6 +163,26 @@ int l_SetTexture(lua_State* L) {
         sf::Packet newPacket = obj->setTextureID(textureID);
         if ( obj->getSynced() )
             SyncManager::sendTCPMessage( newPacket );
+    }
+
+    return 0;
+}*/
+
+// SetTexture( object, textureName )
+int l_SetTexture(lua_State* L) {
+
+    sf::Uint16 objectID;
+    char textureName[256];
+
+    if ( luaL_checkinteger(L,1) ){
+        objectID = lua_tonumber(L,1);
+    }
+
+    strcpy(textureName,lua_tostring(L,2));
+
+    Object * obj = StageManager::gameState->getObject(objectID);
+    if ( obj != 0 ){
+        obj->setTexture(textureName);
     }
 
     return 0;
@@ -192,8 +237,116 @@ int l_CreateObject(lua_State* L){
     return 1;
 }
 
+// CreateLabel( x, y, string )
+int l_CreateLabel(lua_State* L){
+
+    float x,y;
+    char mystr[256];
+
+    x = lua_tonumber(L,1);
+    y = lua_tonumber(L,2);
+    strcpy(mystr,lua_tostring(L,3));
+
+    sf::Uint16 id = StageManager::gameState->addLabel( x,y, mystr );
+    lua_pushnumber( L, id );
+
+    return 1;
+}
+
+// x, y, w, h = GetBounds( labelID )
+int l_GetBounds(lua_State* L){
+    sf::Uint16 id;
+    id = lua_tonumber(L,1);
+
+    Label * label = StageManager::gameState->m_labels[id];
+
+    sf::FloatRect bounds = label->text.getGlobalBounds();
+
+    lua_pushnumber(L, bounds.left );
+    lua_pushnumber(L, bounds.top );
+    lua_pushnumber(L, bounds.width );
+    lua_pushnumber(L, bounds.height );
+
+    return 4;
+}
+
+// SetLabelPosition( labelID, x, y )
+int l_SetLabelPosition(lua_State* L){
+    sf::Uint16 id;
+    id = lua_tonumber(L,1);
+    float x,y;
+    x = lua_tonumber(L,2);
+    y = lua_tonumber(L,3);
+
+    Label * label = StageManager::gameState->m_labels[id];
+
+    label->setPosition(x,y);
+
+    return 1;
+}
+
+// SetText( labelID, text )
+int l_SetText(lua_State* L){
+    sf::Uint16 id;
+    id = lua_tonumber(L,1);
+    char buffer[256];
+    strcpy(buffer,lua_tostring(L,2));
+
+    Label * label = StageManager::gameState->m_labels[id];
+    label->setText(buffer);
+
+    return 1;
+}
+
+// DestroyLabel( id )
+int l_DestroyLabel(lua_State* L) {
+    sf::Uint16 id;
+    id = lua_tonumber(L,1);
+
+    Label * label = StageManager::gameState->m_labels[id];
+    label->destroy();
+
+    return 0;
+}
+
+// SetFontSize( id, size )
+int l_SetFontSize(lua_State* L) {
+    sf::Uint16 id;
+    id = lua_tonumber(L,1);
+
+    int size;
+    size = lua_tonumber(L,2);
+
+    Label * label = StageManager::gameState->m_labels[id];
+    label->setSize(size);
+
+    return 0;
+}
+
+// SetColor( id, colorID )
+int l_SetColor(lua_State* L) {
+    sf::Uint16 id;
+    id = lua_tonumber(L,1);
+
+    int colorID;
+    colorID = lua_tonumber(L,2);
+
+    Label * label = StageManager::gameState->m_labels[id];
+    label->setColor(colorID);
+
+    return 0;
+}
+
+// GetWindowSize()
+int l_GetWindowSize(lua_State* L) {
+    lua_pushnumber(L, WINDOW_WIDTH );
+    lua_pushnumber(L, WINDOW_HEIGHT );
+    return 2;
+}
+
 // RegisterServerEvent ( eventName, eventCode )
 // This is left for debug
+/*
 int l_RegisterServerEvent(lua_State* L) {
 
     char eventName[256];
@@ -204,7 +357,7 @@ int l_RegisterServerEvent(lua_State* L) {
     SyncManager::registerServerEvent(eventName,eventCode);
 
     return 0;
-}
+}*/
 
 // TriggerServerEvent ( eventName )
 int l_TriggerServerEvent(lua_State* L) {
@@ -296,15 +449,31 @@ void LuaConsole::triggerKeyPressEvent( sf::Uint16 key ){
     lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
 }
 
-void LuaConsole::triggerUpdateEvent(){
-    lua_pushstring(LuaConsole::state, "onFrame");
-    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);
+void LuaConsole::triggerTypedEvent(char typedChar){
+    lua_pushstring(LuaConsole::state, "onTyped");
+    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
 
     if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
         return;
 
+    lua_pushlstring( LuaConsole::state, &typedChar, 1 );
+
     //Now the function is on top of the stack
-    lua_call(LuaConsole::state,0,0);
+    lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+}
+
+
+void LuaConsole::triggerUpdateEvent(){
+    if ( triggerUpdate ){
+        lua_pushstring(LuaConsole::state, "onFrame");
+        lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);
+
+        if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
+            return;
+
+        //Now the function is on top of the stack
+        lua_call(LuaConsole::state,0,0);
+    }
 }
 
 void LuaConsole::triggerClientEvent( sf::Uint16 eventCode, sf::Packet restOfPacket ){
@@ -362,6 +531,18 @@ void LuaConsole::triggerClientEvent( sf::Uint16 eventCode, sf::Packet restOfPack
     std::cout << "No such event with code " << eventCode << std::endl;
 }
 
+// connect("127.0.0.1")
+int l_ConnectToServer(lua_State* L) {
+
+    char buffer[256];
+    strcpy(buffer,lua_tostring(L,1));
+
+    SyncManager::connectToServer(sf::IpAddress(buffer));
+
+    LuaConsole::triggerUpdate = true;
+
+    return 0;
+}
 
 void LuaConsole::init(){
     if ( state == NULL ){
@@ -372,8 +553,12 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_my_print);
         lua_setglobal(state, "print");
+
         lua_pushcfunction(state, l_SetPosition);
         lua_setglobal(state, "SetPosition");
+
+        lua_pushcfunction(state, l_GetPosition);
+        lua_setglobal(state, "GetPosition");
 
         //lua_pushcfunction(state, l_RegisterServerEvent);
         //lua_setglobal(state, "RegisterServerEvent");
@@ -413,6 +598,32 @@ void LuaConsole::init(){
 
 
 
+        lua_pushcfunction(state, l_CreateLabel);
+        lua_setglobal(state, "CreateLabel");
+
+        lua_pushcfunction(state, l_SetLabelPosition);
+        lua_setglobal(state, "SetLabelPosition");
+
+        lua_pushcfunction(state, l_GetBounds);
+        lua_setglobal(state, "GetBounds");
+
+        lua_pushcfunction(state, l_SetText);
+        lua_setglobal(state, "SetText");
+
+        lua_pushcfunction(state, l_SetFontSize);
+        lua_setglobal(state, "SetFontSize");
+
+        lua_pushcfunction(state, l_SetColor);
+        lua_setglobal(state, "SetColor");
+
+        lua_pushcfunction(state, l_DestroyLabel);
+        lua_setglobal(state, "DestroyLabel");
+
+        lua_pushcfunction(state, l_GetWindowSize);
+        lua_setglobal(state, "GetWindowSize");
+
+        lua_pushcfunction(state, l_ConnectToServer);
+        lua_setglobal(state, "connect");
     }
 }
 

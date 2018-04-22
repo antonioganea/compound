@@ -23,7 +23,7 @@ sf::Text Console::currentInput;
 sf::Text Console::label;
 float Console::width, Console::height;
 
-#define TEXT_ELEMENTS 18
+#define TEXT_ELEMENTS 13
 
 sf::Text * elements[TEXT_ELEMENTS];
 
@@ -78,7 +78,7 @@ void Console::init()
     label.setFont(myfont);
     label.setPosition(width-label.getLocalBounds().width-3,height-label.getLocalBounds().height);
 
-    setVisible(true);
+    setVisible(false);
 
     generateTextElements();
 }

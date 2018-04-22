@@ -9,15 +9,35 @@ std::map<std::string, ResourcePtr> GameRegistry::m_resources;
 std::stack<ResourceCommand> GameRegistry::m_commands;
 
 void GameRegistry::init(){
-    GameRegistry::queueResource("emeraldo.png",ResourceType::Texture);
-    GameRegistry::queueResource("shard_emeraldo.png",ResourceType::Texture);
-    GameRegistry::queueResource("emeraldo_small.png",ResourceType::Texture);
-    GameRegistry::queueResource("rubie.png",ResourceType::Texture);
-    GameRegistry::queueResource("shard_rubie.png",ResourceType::Texture);
-    GameRegistry::queueResource("laser.png",ResourceType::Texture);
-    GameRegistry::queueResource("sapheer.png",ResourceType::Texture);
-    GameRegistry::queueResource("shard_sapheer.png",ResourceType::Texture);
-    GameRegistry::queueResource("walls.png",ResourceType::Texture);
+    //GameRegistry::queueResource("emeraldo.png",ResourceType::Texture);
+    //GameRegistry::queueResource("shard_emeraldo.png",ResourceType::Texture);
+    //GameRegistry::queueResource("emeraldo_small.png",ResourceType::Texture);
+    //GameRegistry::queueResource("rubie.png",ResourceType::Texture);
+    //GameRegistry::queueResource("shard_rubie.png",ResourceType::Texture);
+    //GameRegistry::queueResource("laser.png",ResourceType::Texture);
+    //GameRegistry::queueResource("sapheer.png",ResourceType::Texture);
+    //GameRegistry::queueResource("shard_sapheer.png",ResourceType::Texture);
+    //GameRegistry::queueResource("walls.png",ResourceType::Texture);
+
+    GameRegistry::queueResource("emeraldo2.png",ResourceType::Texture);
+    GameRegistry::queueResource("1.png",ResourceType::Texture);
+    GameRegistry::queueResource("2.png",ResourceType::Texture);
+    GameRegistry::queueResource("3.png",ResourceType::Texture);
+    GameRegistry::queueResource("4.png",ResourceType::Texture);
+    GameRegistry::queueResource("5.png",ResourceType::Texture);
+    GameRegistry::queueResource("6.png",ResourceType::Texture);
+    GameRegistry::queueResource("7.png",ResourceType::Texture);
+    GameRegistry::queueResource("8.png",ResourceType::Texture);
+    GameRegistry::queueResource("9.png",ResourceType::Texture);
+    GameRegistry::queueResource("10.png",ResourceType::Texture);
+    GameRegistry::queueResource("11.png",ResourceType::Texture);
+    GameRegistry::queueResource("12.png",ResourceType::Texture);
+    GameRegistry::queueResource("13.png",ResourceType::Texture);
+    GameRegistry::queueResource("14.png",ResourceType::Texture);
+    GameRegistry::queueResource("15.png",ResourceType::Texture);
+    GameRegistry::queueResource("16.png",ResourceType::Texture);
+    GameRegistry::queueResource("projectile.png",ResourceType::Texture);
+
     GameRegistry::queueResource("icepattern.png",ResourceType::Texture);
     GameRegistry::queueResource("playbtn-sheet.png",ResourceType::Texture);
     GameRegistry::queueResource("optionsbtn-sheet.png",ResourceType::Texture);
@@ -27,6 +47,7 @@ void GameRegistry::init(){
     GameRegistry::queueResource("picktxt.png", ResourceType::Texture);
     GameRegistry::queueResource("arena.png", ResourceType::Texture);
     GameRegistry::queueResource("dpcomic.ttf",ResourceType::Font);
+    GameRegistry::queueResource("ARCADECLASSIC.TTF",ResourceType::Font);
     GameRegistry::queueResource("connectbtn-sheet.png", ResourceType::Texture);
     GameRegistry::queueResource("readybtn-sheet.png", ResourceType::Texture);
     GameRegistry::queueResource("emeraldo-pick.png", ResourceType::Texture);

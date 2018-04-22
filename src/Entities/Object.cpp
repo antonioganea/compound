@@ -4,14 +4,22 @@
 
 #include "Events.h"
 
+#include "GameRegistry.h"
+
 Object::Object(){
     //ctor
-    shape.setFillColor(sf::Color::Green);
-    shape.setPosition(0,0);
-    shape.setPointCount(3);
-    shape.setRadius(30);
 
-    shape.setOrigin(30,30);
+    sf::Texture * texture = GameRegistry::getResource("emeraldo2.png",ResourceType::Texture).texture;
+    sprite.setTexture( *texture, false );
+    //sprite.setScale( 2.f, 2.f );
+    //sprite.setOrigin( 8.f, 8.f );
+    //sprite.setTextureRect( sf::IntRect( sf::Vector2i(0,0), sf::Vector2i(32,32) ) );
+
+    //shape.setFillColor(sf::Color::Green);
+    //shape.setPosition(0,0);
+    //shape.setPointCount(3);
+    //shape.setRadius(30);
+    //shape.setOrigin(30,30);
 
     serverID = clientID = 0;
     textureID = 0;
@@ -25,7 +33,7 @@ Object::~Object(){
 }
 
 void Object::draw(){
-    Display::window->draw(shape);
+    Display::window->draw(sprite);
 }
 
 void Object::update(float dt){
@@ -33,7 +41,7 @@ void Object::update(float dt){
     x += vx;
     y += vy;
 
-    shape.setPosition(x,y);
+    sprite.setPosition(x,y);
 
     // Update velocity
     vx -= vx*friction;
@@ -48,7 +56,7 @@ bool Object::isDead(){
 
 sf::Packet Object::setPosition(const sf::Vector2f& position)
 {
-    shape.setPosition(position);
+    sprite.setPosition(position);
     x = position.x;
     y = position.y;
 
@@ -60,7 +68,7 @@ sf::Packet Object::setPosition(const sf::Vector2f& position)
 sf::Packet Object::setPosition(const float _x, const float _y){
     x = _x;
     y = _y;
-    shape.setPosition(x,y);
+    sprite.setPosition(x,y);
 
     sf::Packet newPacket;
     newPacket << SHARED_POSITION << serverID << x << y;
@@ -68,7 +76,7 @@ sf::Packet Object::setPosition(const float _x, const float _y){
 }
 
 sf::Vector2f Object::getPosition(){
-    return shape.getPosition();
+    return sprite.getPosition();
 }
 
 void Object::getPosition(float& _x, float& _y)
@@ -87,7 +95,7 @@ sf::Packet Object::kill(){
 
 sf::Packet Object::setRotation(float rot){
     rotation = rot;
-    shape.setRotation(rot);
+    sprite.setRotation(rot);
 
     sf::Packet newPacket;
     newPacket << SHARED_ROTATION << serverID << rot;
@@ -123,11 +131,16 @@ sf::Packet Object::setTextureID(sf::Uint16 id){
         color = sf::Color::Yellow;
         break;
     }
-    shape.setFillColor(color);
+    sprite.setColor(color);
 
     sf::Packet newPacket;
     newPacket << SHARED_TEXTUREID << serverID << textureID;
     return newPacket;
+}
+
+void Object::setTexture( char * textureName ){
+    sf::Texture * texture = GameRegistry::getResource(textureName,ResourceType::Texture).texture;
+    sprite.setTexture(*texture,true);
 }
 
 sf::Uint16 Object::getTextureID(){

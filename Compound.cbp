@@ -57,6 +57,7 @@
 		<Unit filename="include/Entities/Emeraldo.h" />
 		<Unit filename="include/Entities/EmeraldoShard.h" />
 		<Unit filename="include/Entities/Entity.h" />
+		<Unit filename="include/Entities/Label.h" />
 		<Unit filename="include/Entities/Object.h" />
 		<Unit filename="include/Entities/Particle.h" />
 		<Unit filename="include/Gui/Console.h" />
@@ -220,6 +221,7 @@
 		<Unit filename="src/Display/Display.cpp" />
 		<Unit filename="src/Entities/Emeraldo.cpp" />
 		<Unit filename="src/Entities/EmeraldoShard.cpp" />
+		<Unit filename="src/Entities/Label.cpp" />
 		<Unit filename="src/Entities/Object.cpp" />
 		<Unit filename="src/Entities/Particle.cpp" />
 		<Unit filename="src/Gui/Console.cpp" />
