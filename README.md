@@ -1,5 +1,5 @@
 # Compound
-C++ written 2D multiplayer/LAN game engine sprinkled with some Lua extensibility magic. Check out the [website](http://www.compoundgame.com).
+C++ written 2D multiplayer/LAN game engine sprinkled with some Lua extensibility magic. Check out the [website](http://compoundgame.000webhostapp.com/).
 
 ## Why Compound?
 - Cross-platform
@@ -123,7 +123,7 @@ TriggerServerEvent( eventName, arg1, arg2, ... , arg8 )
 ## How do I test it?
 This build comes packed with a simple game called __Virus Invaders__.
 
-You have to download the server and client ( available [here](http://www.compoundgame.com) ). Then :
+You have to download the server and client ( available [here](http://compoundgame.000webhostapp.com/) ). Then :
 - Start the server
 - Start client 1, open the debugging console by pressing BACKTICK and type : connect("127.0.0.1") and hit Enter
 - Do the same thing with a second client. ( Eventually you can put a different ip there if you actually want to test it on different computers )
