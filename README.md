@@ -1,5 +1,5 @@
 # Compound
-C++ written 2D multiplayer/LAN game engine sprinkled with some Lua extensibility magic. Check out the [website](www.compoundgame.com).
+C++ written 2D multiplayer/LAN game engine sprinkled with some Lua extensibility magic. Check out the [website](http://www.compoundgame.com).
 
 ## Why Compound?
 - Cross-platform
