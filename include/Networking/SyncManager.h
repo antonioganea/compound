@@ -31,7 +31,6 @@ class SyncManager
         static short unsigned int serverPort;
         static short unsigned int localUDPPort;
         static bool connected;
-        //static char * packageBuffer;
         static sf::Packet packet;
         static sf::SocketSelector selector;
 
@@ -45,13 +44,7 @@ class SyncManager
         static void parseBuffer();
 
         static int myPlayerID;
-        //static Crystal * myCrystal;
-
-        //static Crystal * crystals[MAX_PLAYERS];
-        //static char * options;
         static bool players[MAX_PLAYERS];
-
-        //static void input( sf::Event event );
 
         static void triggerServerEvent( const char * eventName );
         static void registerServerEvent( const char * eventName, sf::Uint16 id );

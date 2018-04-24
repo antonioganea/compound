@@ -56,6 +56,7 @@ int main(){
                     Display::window->close();
                 LuaConsole::triggerKeyPressEvent( event.key.code );
             }
+
             if (event.type == sf::Event::TextEntered ){
                 if ( !Console::getVisible() ){
                     if( ( 'a' <= event.text.unicode && 'z' >= event.text.unicode ) ||

@@ -437,29 +437,33 @@ void LuaConsole::triggerClientEvent( const char * eventName ){
 }
 
 void LuaConsole::triggerKeyPressEvent( sf::Uint16 key ){
-    lua_pushstring(LuaConsole::state, "onKeyPress");
-    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
+    if ( triggerUpdate ){
+        lua_pushstring(LuaConsole::state, "onKeyPress");
+        lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
 
-    if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
-        return;
+        if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
+            return;
 
-    lua_pushnumber( LuaConsole::state, key );
+        lua_pushnumber( LuaConsole::state, key );
 
-    //Now the function is on top of the stack
-    lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+        //Now the function is on top of the stack
+        lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+    }
 }
 
 void LuaConsole::triggerTypedEvent(char typedChar){
-    lua_pushstring(LuaConsole::state, "onTyped");
-    lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
+    if ( triggerUpdate ){
+        lua_pushstring(LuaConsole::state, "onTyped");
+        lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
 
-    if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
-        return;
+        if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
+            return;
 
-    lua_pushlstring( LuaConsole::state, &typedChar, 1 );
+        lua_pushlstring( LuaConsole::state, &typedChar, 1 );
 
-    //Now the function is on top of the stack
-    lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+        //Now the function is on top of the stack
+        lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+    }
 }
 
 
@@ -538,8 +542,6 @@ int l_ConnectToServer(lua_State* L) {
     strcpy(buffer,lua_tostring(L,1));
 
     SyncManager::connectToServer(sf::IpAddress(buffer));
-
-    LuaConsole::triggerUpdate = true;
 
     return 0;
 }

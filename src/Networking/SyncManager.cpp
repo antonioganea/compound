@@ -289,6 +289,7 @@ void SyncManager::parseBuffer(){
         }
         case C_RUN_CLIENT_SCRIPTS:{
             LuaConsole::execute("resources/crystal/client.lua");
+            LuaConsole::triggerUpdate = true;
             break;
         }
 
