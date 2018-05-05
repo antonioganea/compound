@@ -26,6 +26,7 @@
 					<Add directory="include/Gui" />
 					<Add directory="include/Debug" />
 					<Add directory="include/Scripting" />
+					<Add directory="lib/lua" />
 				</Compiler>
 				<Linker>
 					<Add directory="C:/Users/Sapard/workspace/compound/lib/lua" />

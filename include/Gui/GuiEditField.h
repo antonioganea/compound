@@ -17,11 +17,15 @@ class GuiEditField
         void setString( std::string str );
         char * getString();
         void checkType( sf::Event::KeyEvent keyEvent );
+        void checkText( sf::Event::TextEvent textEvent );
         bool checkClick( sf::Event::MouseButtonEvent buttonEvent );
         bool checkHover( sf::Event::MouseMoveEvent moveEvent );
         sf::RectangleShape shape;
         sf::Text text;
         void draw();
+        bool highlighted;
+
+        bool ipField;
 
         char stringBuffer[16];
     protected:

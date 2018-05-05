@@ -23,6 +23,7 @@ GuiEditField::GuiEditField( std::string defaultString, int x, int y, int w, int 
     strcpy(stringBuffer,defaultString.c_str());
 
     highlight(false);
+    ipField = false;
 }
 
 void GuiEditField::setString( std::string str ){
@@ -35,20 +36,41 @@ char * GuiEditField::getString(){
 }
 
 void GuiEditField::checkType( sf::Event::KeyEvent keyEvent ){
-    int len = strlen(stringBuffer);
-    if ( keyEvent.code == sf::Keyboard::BackSpace ){
-        if ( len > 0 )
-            stringBuffer[len-1] = 0;
-    }else if ( keyEvent.code >= sf::Keyboard::Num0 && keyEvent.code <= sf::Keyboard::Num9 ){
-        if ( len < 15 )
-            stringBuffer[len] = keyEvent.code - sf::Keyboard::Num0 + '0';
-    }else if ( keyEvent.code == sf::Keyboard::Period ){
-        if ( len < 15 )
-            stringBuffer[len] = '.';
-    }
+    if ( highlighted ){
+        int len = strlen(stringBuffer);
+        if ( keyEvent.code == sf::Keyboard::BackSpace ){
+            if ( len > 0 )
+                stringBuffer[len-1] = 0;
+        }
+        else {
+            if (ipField) {
+                if ( keyEvent.code >= sf::Keyboard::Num0 && keyEvent.code <= sf::Keyboard::Num9 ){
+                    if ( len < 15 )
+                        stringBuffer[len] = keyEvent.code - sf::Keyboard::Num0 + '0';
+                }else if ( keyEvent.code == sf::Keyboard::Period ){
+                    if ( len < 15 )
+                        stringBuffer[len] = '.';
+                }
+            }
+        }
 
-    setString(stringBuffer);
+        setString(stringBuffer);
+    }
 }
+
+
+void GuiEditField::checkText(sf::Event::TextEvent textEvent)
+{
+    if ( !ipField && highlighted ){
+        int len = strlen(stringBuffer);
+        if (isalnum(textEvent.unicode) ){
+            stringBuffer[len] = textEvent.unicode;
+            stringBuffer[len+1] = 0;
+        }
+        setString(stringBuffer);
+    }
+}
+
 
 void GuiEditField::highlight( bool hightlightOn ){
     if ( hightlightOn ){
@@ -57,6 +79,7 @@ void GuiEditField::highlight( bool hightlightOn ){
     else{
         shape.setFillColor(sf::Color::White);
     }
+    highlighted = hightlightOn;
 }
 
 void GuiEditField::setPosition(float x, float y){

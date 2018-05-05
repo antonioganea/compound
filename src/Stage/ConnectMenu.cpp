@@ -17,14 +17,16 @@ ConnectMenu::ConnectMenu()
     arena.setTexture(arenaTexture);
 
     GuiButton * button = new GuiButton(5); // back
-    button->setPosition(960,680);
+    button->setPosition(WINDOW_WIDTH/2,680);
     m_buttons.push_back(button);
 
     button = new GuiButton(6);
-    button->setPosition(960,540);
+    button->setPosition(WINDOW_WIDTH/2,540);
     m_buttons.push_back(button);
 
-    field = new GuiEditField( "127.0.0.1", 960, 300, 300, 80 );
+    ipField = new GuiEditField( "127.0.0.1", WINDOW_WIDTH/2, 250, 400, 80 );
+    ipField->ipField = true;
+    nameField = new GuiEditField( "Player", WINDOW_WIDTH/2, 350, 400, 80 );
 }
 
 ConnectMenu::~ConnectMenu(){
@@ -52,13 +54,19 @@ void ConnectMenu::input( const sf::Event & event ){
     }
     switch( event.type ){
         case sf::Event::MouseMoved:
-            field->checkHover(event.mouseMove);
+            ipField->checkHover(event.mouseMove);
+            nameField->checkHover(event.mouseMove);
             break;
         case sf::Event::MouseButtonReleased:
-            field->checkClick(event.mouseButton);
+            ipField->checkClick(event.mouseButton);
+            nameField->checkClick(event.mouseButton);
             break;
         case sf::Event::KeyPressed:
-            field->checkType(event.key);
+            ipField->checkType(event.key);
+            nameField->checkType(event.key);
+            break;
+        case sf::Event::TextEntered:
+            nameField->checkText(event.text);
             break;
         default:
             break;
@@ -74,5 +82,6 @@ void ConnectMenu::draw()
     for ( std::vector<GuiLabel*>::iterator it = m_labels.begin(); it != m_labels.end(); it++ ){
         (*it)->draw();
     }
-    field->draw();
+    ipField->draw();
+    nameField->draw();
 }

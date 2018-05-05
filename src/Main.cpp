@@ -56,6 +56,9 @@ int main(){
                     Display::window->close();
                 LuaConsole::triggerKeyPressEvent( event.key.code );
             }
+            if (event.type == sf::Event::KeyReleased){
+                LuaConsole::triggerKeyReleaseEvent( event.key.code );
+            }
 
             if (event.type == sf::Event::TextEntered ){
                 if ( !Console::getVisible() ){

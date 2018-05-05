@@ -4,7 +4,7 @@
 #define APP_NAME "Compound"
 #define APP_VERSION "v0.5"
 
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 800
+#define WINDOW_WIDTH 1600
+#define WINDOW_HEIGHT 1000
 
 #endif // CONFIG_H_INCLUDED

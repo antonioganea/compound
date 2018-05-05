@@ -6,6 +6,10 @@
 
 #include <iostream>
 
+#include <SFML/Audio.hpp>
+
+#include "GameRegistry.h"
+
 #include "Config.h"
 
 
@@ -451,6 +455,21 @@ void LuaConsole::triggerKeyPressEvent( sf::Uint16 key ){
     }
 }
 
+void LuaConsole::triggerKeyReleaseEvent( sf::Uint16 key ){
+    if ( triggerUpdate ){
+        lua_pushstring(LuaConsole::state, "onKeyRelease");
+        lua_gettable(LuaConsole::state, LUA_REGISTRYINDEX);  /* retrieve value */
+
+        if ( lua_isnil(LuaConsole::state,-1) ) // if no function is registered for the event
+            return;
+
+        lua_pushnumber( LuaConsole::state, key );
+
+        //Now the function is on top of the stack
+        lua_call(LuaConsole::state,1,0); // call it - 1 arg, 0 ret
+    }
+}
+
 void LuaConsole::triggerTypedEvent(char typedChar){
     if ( triggerUpdate ){
         lua_pushstring(LuaConsole::state, "onTyped");
@@ -546,6 +565,25 @@ int l_ConnectToServer(lua_State* L) {
     return 0;
 }
 
+// GetNickname()
+int l_GetNickname(lua_State * L){
+    lua_pushstring(L,SyncManager::nickname.c_str());
+    return 1;
+}
+
+sf::Sound sound;
+int l_PlaySound(lua_State *L){
+
+    char buffer[256];
+    strcpy(buffer,lua_tostring(L,1));
+
+    sound.setBuffer( * (GameRegistry::getResource(buffer,ResourceType::SoundBuffer).soundBuffer) );
+    sound.play();
+
+    return 0;
+}
+
+
 void LuaConsole::init(){
     if ( state == NULL ){
         state = luaL_newstate();
@@ -618,6 +656,8 @@ void LuaConsole::init(){
         lua_pushcfunction(state, l_SetColor);
         lua_setglobal(state, "SetColor");
 
+
+
         lua_pushcfunction(state, l_DestroyLabel);
         lua_setglobal(state, "DestroyLabel");
 
@@ -626,6 +666,13 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_ConnectToServer);
         lua_setglobal(state, "connect");
+
+
+        lua_pushcfunction(state, l_GetNickname);
+        lua_setglobal(state, "GetNickname");
+
+        lua_pushcfunction(state, l_PlaySound);
+        lua_setglobal(state, "PlaySound");
     }
 }
 

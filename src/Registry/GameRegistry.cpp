@@ -37,6 +37,7 @@ void GameRegistry::init(){
     GameRegistry::queueResource("15.png",ResourceType::Texture);
     GameRegistry::queueResource("16.png",ResourceType::Texture);
     GameRegistry::queueResource("projectile.png",ResourceType::Texture);
+    GameRegistry::queueResource("spaceship.png",ResourceType::Texture);
 
     GameRegistry::queueResource("icepattern.png",ResourceType::Texture);
     GameRegistry::queueResource("playbtn-sheet.png",ResourceType::Texture);
@@ -53,6 +54,10 @@ void GameRegistry::init(){
     GameRegistry::queueResource("emeraldo-pick.png", ResourceType::Texture);
     GameRegistry::queueResource("rubie-pick.png", ResourceType::Texture);
     GameRegistry::queueResource("sapheer-pick.png", ResourceType::Texture);
+
+
+    GameRegistry::queueResource("dead.wav", ResourceType::SoundBuffer);
+    GameRegistry::queueResource("shoot.wav", ResourceType::SoundBuffer);
     while (!GameRegistry::loadResource()){}
 }
 

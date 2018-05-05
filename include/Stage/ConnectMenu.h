@@ -23,7 +23,8 @@ class ConnectMenu : public Stage
         void draw();
 
         sf::RectangleShape arena;
-        GuiEditField * field;
+        GuiEditField * ipField;
+        GuiEditField * nameField;
     protected:
 
     private:

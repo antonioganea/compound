@@ -24,6 +24,8 @@ sf::SocketSelector SyncManager::socketSelector;
 bool SyncManager::players[MAX_PLAYERS];
 int SyncManager::myPlayerID;
 
+std::string SyncManager::nickname;
+
 std::map<std::string,sf::Uint16,strless> SyncManager::serverEvents;
 std::map<std::string,sf::Uint16,strless> SyncManager::clientEvents;
 
@@ -39,6 +41,7 @@ void SyncManager::init(){
     SyncManager::serverPort = 4474;
     SyncManager::localUDPPort = 30125;
     SyncManager::connected = false;
+    nickname = "";
 }
 
 void SyncManager::connectToServer( const sf::IpAddress& _address ){
@@ -343,11 +346,12 @@ void SyncManager::parseBuffer(){
         }
         case SHARED_VELOCITY:{
             sf::Uint16 serverID;
-            float vx,vy;
-            receivePacket >> serverID >> vx >> vy;
+            float vx,vy,x,y;
+            receivePacket >> serverID >> vx >> vy >> x >> y;
             Object * obj = StageManager::gameState->getObjectByServerID(serverID);
             if ( obj != 0 ){
                 obj -> setVelocity(vx,vy);
+                obj -> setPosition(x,y);
             }
             break;
         }

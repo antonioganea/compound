@@ -22,6 +22,7 @@ class LuaConsole
 
         static void triggerClientEvent( const char * eventName );
         static void triggerKeyPressEvent( sf::Uint16 key );
+        static void triggerKeyReleaseEvent( sf::Uint16 key );
         static void triggerTypedEvent( char typedChar );
         static void triggerClientEvent( sf::Uint16 eventCode, sf::Packet restOfPacket );
         static void triggerUpdateEvent();

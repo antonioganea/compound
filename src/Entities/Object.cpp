@@ -141,6 +141,7 @@ sf::Packet Object::setTextureID(sf::Uint16 id){
 void Object::setTexture( char * textureName ){
     sf::Texture * texture = GameRegistry::getResource(textureName,ResourceType::Texture).texture;
     sprite.setTexture(*texture,true);
+    sprite.setOrigin( ((sf::Vector2f)texture->getSize())/2.f );
 }
 
 sf::Uint16 Object::getTextureID(){
@@ -152,7 +153,7 @@ sf::Packet Object::setVelocity( const sf::Vector2f& velocity ){
     vy = velocity.y;
 
     sf::Packet newPacket;
-    newPacket << SHARED_VELOCITY << serverID << vx << vy;
+    newPacket << SHARED_VELOCITY << serverID << vx << vy << x << y;
     return newPacket;
 }
 
@@ -161,7 +162,7 @@ sf::Packet Object::setVelocity(const float velx, const float vely){
     vy = vely;
 
     sf::Packet newPacket;
-    newPacket << SHARED_VELOCITY << serverID << vx << vy;
+    newPacket << SHARED_VELOCITY << serverID << vx << vy << x << y;
     return newPacket;
 }
 

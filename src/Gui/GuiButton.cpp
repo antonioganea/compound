@@ -5,7 +5,8 @@
 #include <iostream>
 
 #include "StageManager.h"
-//#include "SyncManager.h"
+#include "SyncManager.h"
+
 
 GuiButton::GuiButton(int _functionality){
     functionality = _functionality;
@@ -100,25 +101,29 @@ bool GuiButton::checkClick(sf::Event::MouseButtonEvent buttonEvent){
                 break;
             case 6: // Connect
                 //SyncManager::connectToServer(StageManager::connectMenu->field->getString());
-                StageManager::pushStage(StageManager::pickMenu);
+                //StageManager::pushStage(StageManager::pickMenu);
+                StageManager::popStage();
+                StageManager::pushStage(StageManager::gameState);
+                SyncManager::nickname = StageManager::connectMenu->nameField->getString();
+                SyncManager::connectToServer(sf::IpAddress(StageManager::connectMenu->ipField->getString()));
                 break;
             case 7: // Ready
 
                 break;
             case 8: // Emeraldo
                 //SyncManager::sendCrystalType(1);
-                StageManager::popStage();
-                StageManager::pushStage(StageManager::gameState);
+                //StageManager::popStage();
+                //StageManager::pushStage(StageManager::gameState);
                 break;
             case 9: // Rubie
                 //SyncManager::sendCrystalType(2);
-                StageManager::popStage();
-                StageManager::pushStage(StageManager::gameState);
+                //StageManager::popStage();
+                //StageManager::pushStage(StageManager::gameState);
                 break;
             case 10: // Sapheer
                 //SyncManager::sendCrystalType(3);
-                StageManager::popStage();
-                StageManager::pushStage(StageManager::gameState);
+                //StageManager::popStage();
+                //StageManager::pushStage(StageManager::gameState);
                 break;
             default:
                 std::cout << "GUIBUTTON FUNCTIONALITY UNKNOWN " << functionality << std::endl;

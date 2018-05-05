@@ -58,6 +58,8 @@ class SyncManager
 
         static sf::Uint16 getServerEventCode( const char * eventName );
         static std::string getClientEventName( sf::Uint16 eventCode );
+
+        static std::string nickname;
     protected:
 
     private:

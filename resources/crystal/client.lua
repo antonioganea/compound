@@ -1,4 +1,4 @@
-print("Script loaded - green circle");
+print("Script loading - Virus Invaders 2.0");
 
 local width, height = GetWindowSize()
 
@@ -10,41 +10,42 @@ AddEventHandler("invaders:clientTest",function(arg1, arg2, arg3, arg4)
 end)
 ]]
 
+local playerSide
+
 RegisterClientEvent("invaders:spawnCritter")
-AddEventHandler("invaders:spawnCritter",function(id, texture, code, x)
+AddEventHandler("invaders:spawnCritter",function(id, texture, code, x, your)
     --print("invaders:spawnCritter  " .. tostring(math.floor(id)) .. " " .. tostring(texture) .. " 0x" .. tostring(code) .. " " .. tostring(math.floor(x)) )
     if type(code) == "number" then
         code = math.floor(code)
     end
-    spawnCritter( math.floor(id), texture, code, math.floor(x) )
+    spawnCritter( math.floor(id), texture, code, math.floor(x), your )
 end)
-
-function e()
-    TriggerServerEvent( "invaders:virus", 500 )
-end
 
 local critters = {}
 
-function spawnCritter( id, texture, code, x )
+function spawnCritter( id, texture, code, x, your )
     newCritter = CreateObject()
     SetTexture( newCritter, texture )
-    newLabel = CreateLabel( 0, 0, "0x" .. tostring(code) )
-    SetFontSize(newLabel,32)
+    newLabel = CreateLabel( 0, 0, tostring(code) )
+    SetFontSize(newLabel,16)
     SetColor(newLabel,1)
 
     SetPosition ( newCritter, x, -50 )
     SetVelocity ( newCritter, 0, 20 )
     SetFriction ( newCritter, 0.2 )
 
-    critters[id] = { ["object"] = newCritter, ["code"] = "0X"..code, ["label"] = newLabel, ["timer"] = 0 }
+    critters[id] = { ["object"] = newCritter, ["code"] = code, ["label"] = newLabel, ["timer"] = 0, ["your"] = your }
 end
 
-local it = 1
-
 function killCritter(k)
-    KillObject(critters[k].object)
-    DestroyLabel(critters[k].label)
-    critters[k] = nil
+    if ( critters ) then
+        if critters[k] then
+            KillObject(critters[k].object)
+            DestroyLabel(critters[k].label)
+            critters[k] = nil
+            PlaySound("dead.wav")
+        end
+    end
 end
 
 local projectiles = {}
@@ -60,14 +61,22 @@ function shootProjectile( turret, targetCritter )
 
     projectiles[projectileID] = { ["object"] = newProjectile, ["target"] = targetCritter }
     projectileID = projectileID + 1
+
+    PlaySound("shoot.wav")
 end
 
 -- Turret & projectiles --
 local myTurret = CreateObject()
 SetTexture( myTurret, "12.png" )
-SetPosition( myTurret, width/2-30, height-100 )
+SetPosition( myTurret, width/4-30, height-100 )
 
-local turretQueue = {}
+local otherTurret = CreateObject()
+SetTexture( otherTurret, "12.png" )
+SetPosition( otherTurret, width*3/4-30, height-100)
+
+
+local myTurretQueue = {}
+local otherTurretQueue = {}
 
 -- Game Console ( "Hacker" console ) --
 
@@ -80,16 +89,33 @@ local justEnteredCommand = false
 
 function updateHackerLabel() SetText( hackerLabel, "Command   " .. hackerInput); justEnteredCommand = false; SetColor(hackerLabel,1) end
 
-local queueNext = 1
-function enqueueForKilling(k)
-    SetColor(critters[k].label,2)
-    turretQueue[queueNext] = k
-    queueNext = queueNext + 1
+local myQueueNext = 1
+function enqueueMineForKilling(k)
+    if critters[k] then
+        SetColor(critters[k].label,2)
+        myTurretQueue[myQueueNext] = k
+        myQueueNext = myQueueNext + 1
+    end
+end
+
+local otherQueueNext = 1
+function enqueueOtherForKilling(k)
+    if critters[k] then
+        SetColor(critters[k].label,2)
+        otherTurretQueue[otherQueueNext] = k
+        otherQueueNext = otherQueueNext + 1
+    end
 end
 
 RegisterClientEvent("invaders:enqueue")
-AddEventHandler("invaders:enqueue", function( critterID )
-    enqueueForKilling(critterID)
+AddEventHandler("invaders:enqueue", function( critterID, turret )
+    if turret == 1 then
+        enqueueMineForKilling(critterID)
+        print ("Enqueued mine for killing " .. critterID )
+    else
+        enqueueOtherForKilling(critterID)
+        print ("Enqueued other for killing " .. critterID )
+    end
 end)
 
 
@@ -103,11 +129,14 @@ function submitCommand()
     local hitsomething = false
 
     for k,v in pairs( critters ) do
-        print ("Comparing " .. hackerInput .. " and " .. v.code )
-        if ( hackerInput == v.code ) then
-            --enqueueForKilling(k)
-            TriggerServerEvent("invaders:commandKill",k)
-            hitsomething = true
+        if v.your == 1 then
+            print ("Comparing " .. hackerInput .. " and " .. v.code )
+            if ( hackerInput == v.code ) then
+                --enqueueMineForKilling(k)
+                TriggerServerEvent("invaders:commandKill",k, playerSide)
+                print ( "HIT critter" .. k )
+                hitsomething = true
+            end
         end
     end
 
@@ -135,9 +164,6 @@ AddEventHandler( "onKeyPress", function( keyCode )
     end
 end)
 
-
-
-
 local spawnTimer = 0
 local clocker = false
 
@@ -149,11 +175,58 @@ end)
 
 TriggerServerEvent("invaders:askForClock")
 
+local MYTURRET
+
+RegisterClientEvent("invaders:playerSide")
+AddEventHandler("invaders:playerSide",function( playerside )
+    playerSide = playerside
+    if playerside == 1 then
+        MYTURRET = myTurret
+    else
+        MYTURRET = otherTurret
+    end
+    TriggerServerEvent("invaders:nickname", playerside, GetNickname())
+end)
+
+updateTimerMax = 180
+
+RegisterClientEvent("invaders:updateTimer")
+AddEventHandler("invaders:updateTimer",function( timer )
+    updateTimerMax = timer
+end)
+
+
+local announceBoard = nil
+local announceTimer = 0
+
+RegisterClientEvent("invaders:announce")
+AddEventHandler("invaders:announce",function( stringToAnnounce )
+    announceBoard = CreateLabel( width/2, height-50, stringToAnnounce )
+    SetFontSize(announceBoard,128)
+    _,_,labelWidth,labelHeight = GetBounds( announceBoard )
+    --SetColor(announceBoard,1)
+    SetLabelPosition(announceBoard,width/2-labelWidth/2, height/2-labelHeight)
+    announceTimer = 120
+end
+)
+
 AddEventHandler( "onFrame", function( )
+
+    if announceTimer > 0 then
+        announceTimer = announceTimer-1
+        if announceTimer < 10 then
+            SetColor(announceBoard,2)
+        elseif announceTimer < 5 then
+            SetColor(announceBoard,1)
+        end
+    elseif announceBoard ~= nil then
+        DestroyLabel(announceBoard)
+        announceBoard=nil
+    end
 
     if clocker then
         spawnTimer = spawnTimer + 1
-        if spawnTimer >= 180 then
+        if spawnTimer >= 10 then
             TriggerServerEvent("invaders:spawnTimer")
             spawnTimer = 0
         end
@@ -170,7 +243,7 @@ AddEventHandler( "onFrame", function( )
         else
             SetLabelPosition(v.label,cx,cy-50)
             v.timer = v.timer + 1
-            if ( v.timer == 180 ) then
+            if ( v.timer == updateTimerMax ) then
                 v.timer = 0
                 SetVelocity(v.object,0,15)
             end
@@ -180,99 +253,79 @@ AddEventHandler( "onFrame", function( )
     -- Projectile update
     for k,v in pairs ( projectiles ) do
         local px,py = GetPosition(v.object)
-        local tx,ty = GetPosition(critters[v.target].object)
-        if ( py-75 < ty ) then
-            killCritter(v.target)
-            KillObject(v.object)
-            projectiles[k] = nil
-            print("Shot critter")
+        if critters[v.target] then
+            local tx,ty = GetPosition(critters[v.target].object)
+            if ( py-75 < ty ) then
+                killCritter(v.target)
+                KillObject(v.object)
+                projectiles[k] = nil
+                print("Shot critter")
+            end
         end
     end
 
-    if turretNextTarget == nil then
-        for k,v in pairs ( turretQueue ) do
-            turretNextTarget = v
-            turretQueue[k] = nil
+    if myTurretNextTarget == nil then
+        for k,v in pairs ( myTurretQueue ) do
+            myTurretNextTarget = v
+            myTurretQueue[k] = nil
             break
         end
     end
 
-    if turretNextTarget ~= nil then
-        local tx, ty = GetPosition ( critters[turretNextTarget].object )
-        local mx, my = GetPosition ( myTurret )
-        if ( tx < mx-5 ) then
-            SetPosition( myTurret, mx-3, my )
-        elseif ( tx > mx+5 ) then
-            SetPosition( myTurret, mx+3, my )
-        else
-            shootProjectile( myTurret, turretNextTarget )
-            turretNextTarget = nil;
+    if otherTurretNextTarget == nil then
+        for k,v in pairs ( otherTurretQueue ) do
+            otherTurretNextTarget = v
+            otherTurretQueue[k] = nil
+            break
+        end
+    end
+
+    if myTurretNextTarget ~= nil then
+        if critters[myTurretNextTarget] then
+            local tx, ty = GetPosition ( critters[myTurretNextTarget].object )
+            local mx, my = GetPosition ( myTurret )
+            if ( tx < mx-5 ) then
+                SetPosition( myTurret, mx-3, my )
+            elseif ( tx > mx+5 ) then
+                SetPosition( myTurret, mx+3, my )
+            else
+                shootProjectile( myTurret, myTurretNextTarget )
+                myTurretNextTarget = nil;
+            end
+        end
+    end
+
+    if otherTurretNextTarget ~= nil then
+        if critters[otherTurretNextTarget] then
+            local tx, ty = GetPosition ( critters[otherTurretNextTarget].object )
+            local mx, my = GetPosition ( otherTurret )
+            if ( tx < mx-5 ) then
+                SetPosition( otherTurret, mx-3, my )
+            elseif ( tx > mx+5 ) then
+                SetPosition( otherTurret, mx+3, my )
+            else
+                shootProjectile( otherTurret, otherTurretNextTarget )
+                otherTurretNextTarget = nil;
+            end
         end
     end
 
 
 end)
 
-print("loaded!")
+local scoreLabels = {}
 
---[[
-local speed = 10
+scoreLabels[1] = CreateLabel( width/4, height-50, "PLAYER 1" )
+SetFontSize(newLabel,16)
+SetColor(newLabel,1)
 
-local myObject = CreateObject()
-SetPosition( myObject, 560, 500 )
+scoreLabels[2] = CreateLabel( width*3/4, height-50, "PLAYER 2" )
+SetFontSize(newLabel,16)
+SetColor(newLabel,1)
 
-local myObject2 = CreateObject()
-SetPosition( myObject2, 500, 500 )
+RegisterClientEvent("invaders:score")
+AddEventHandler("invaders:score",function( tag, playerside )
+    SetText(scoreLabels[playerside], tag)
+end)
 
-local x = 100
-local y = 100
-
--- W - 22
--- A - 0
--- S - 18
--- D - 3
--- X - 23
-
-
-local color = 1
-
-SetTexture( myObject, 5 )
-SetFriction( myObject, 0.1 )
-SetFriction( myObject2, 0.1 )
-
-local rot = 0
-
-AddEventHandler( "onKeyPress", function( keyCode )
-    x = 0
-    y = 0
-    local rot1 = rot
-    if keyCode == 22 then -- W
-        y = -speed
-        rot = 0
-    elseif keyCode == 18 then -- S
-        y = speed
-        rot = 180
-    elseif keyCode == 0 then -- A
-        x = -speed
-        rot = 270
-    elseif keyCode == 3 then -- D
-        x = speed
-        rot = 90
-    elseif keyCode == 23 then -- X
-        SetTexture( myObject2, color )
-        color = color + 1
-        if color > 5 then color = 1 end
-        SetTexture ( myObject, color )
-        --KillObject( myObject )
-    end
-
-    --SetPosition( myObject, x, y )
-    SetVelocity( myObject, x, y )
-    SetVelocity( myObject2, -x, -y )
-    if rot1 ~= rot then
-        SetRotation( myObject, rot )
-        SetRotation( myObject2, 180+rot )
-    end
-end
-)
-]]
+print("Script loaded! Virus Invaders 2.0")
