@@ -233,7 +233,19 @@
 		<Unit filename="src/Main.cpp" />
 		<Unit filename="src/Networking/SyncManager.cpp" />
 		<Unit filename="src/Registry/GameRegistry.cpp" />
+		<Unit filename="src/Scripting/EventAPI.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="src/Scripting/LabelAPI.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="src/Scripting/LuaConsole.cpp" />
+		<Unit filename="src/Scripting/ObjectAPI.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="src/Stage/ConnectMenu.cpp" />
 		<Unit filename="src/Stage/CreditsMenu.cpp" />
 		<Unit filename="src/Stage/GameState.cpp" />

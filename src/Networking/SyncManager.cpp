@@ -403,15 +403,4 @@ void SyncManager::parseBuffer(){
 
 
     }
-
-
 }
-//**************************************************************************************
-/*
-void SyncManager::input( sf::Event event ){
-
-    if ( SyncManager::myPlayerID != -1 ){
-        if ( SyncManager::crystals[SyncManager::myPlayerID] )
-            SyncManager::crystals[SyncManager::myPlayerID]->input(event);
-    }
-}*/
