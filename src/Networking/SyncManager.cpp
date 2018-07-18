@@ -8,6 +8,8 @@
 #include "Events.h"
 #include "LuaConsole.h"
 
+#include "DebugLog.h"
+
 
 sf::TcpSocket SyncManager::tcpSocket;
 sf::UdpSocket SyncManager::udpSocket;
@@ -36,7 +38,7 @@ void SyncManager::init(){
         SyncManager::players[i] = false;
         //SyncManager::crystals[i]= NULL;
     }
-    std::cout << "SyncManager Initialized!" << std::endl;
+    DebugLog::debug("SyncManager Initialized!");
     SyncManager::myPlayerID = -1;
     SyncManager::serverPort = 4474;
     SyncManager::localUDPPort = 30125;
@@ -45,22 +47,22 @@ void SyncManager::init(){
 }
 
 void SyncManager::connectToServer( const sf::IpAddress& _address ){
-    std::cout << "Attempting to connect to server.. on port " << SyncManager::serverPort << std::endl;
+    DebugLog::info( "Attempting to connect to server on port : %d", SyncManager::serverPort );
     sf::Socket::Status status = SyncManager::tcpSocket.connect( _address, SyncManager::serverPort, sf::Time::Zero );
     if ( status == sf::Socket::Status::Done ){
-        std::cout << "Successfully connected to server! ( TCP )" << std::endl;
+        DebugLog::info( "Successfully connected to server! ( TCP )" );
         SyncManager::connected = true;
         //SyncManager::tcpSocket.setBlocking(false);
     }
     else
-        std::cout << "Failed to connect to server!" << std::endl;
+        DebugLog::error( "Failed to connect to server!" );
 
     // UDP socket:
     SyncManager::address = _address;
     //SyncManager::serverPort = 4474;
     // bind the socket to a port
     if (SyncManager::udpSocket.bind(SyncManager::localUDPPort) != sf::Socket::Done){
-        std::cout << "Problem binding UDP socket to port " << SyncManager::localUDPPort << std::endl;
+        DebugLog::error( "Problem binding UDP socket to port %hu", SyncManager::localUDPPort );
     }
     else{
         std::cout << "Successfuly bound UDP socket" << std::endl;
@@ -109,10 +111,10 @@ void SyncManager::triggerServerEvent( const char * eventName ){
         eventCode = it->second;
         packet << eventCode;
         SyncManager::tcpSocket.send(packet);
-        std::cout << "Triggered server event " << eventName << std::endl;
+        DebugLog::trace( "Triggered server event %s", eventName );
     }
     else{
-        std::cout << "ERROR : Packet not sent, Event not found : "  << eventName << std::endl;
+        DebugLog::error( "Packet not sent, Event not found : %s", eventName );
     }
 }
 
@@ -152,7 +154,7 @@ void SyncManager::registerServerEvent( const char* eventName, sf::Uint16 id )
     //myMap["onPlayerJoined"] = 1;
 
     serverEvents[eventName] = id;
-    std::cout << "Registered server event " << eventName << " " << id << std::endl;
+    DebugLog::debug( "Registered server event %s %d", eventName, id );
 }
 
 void SyncManager::requestServerEvents(){
@@ -194,11 +196,11 @@ void SyncManager::receivePackets(){
         }
         else{
             if ( status == sf::Socket::Status::Error )
-                std::cout << "ERORR ON PACKAGE RECEIVEING (TCP) !!!!!!!!!!!!!!!!" << std::endl;
+                DebugLog::error("ERORR ON PACKAGE RECEIVEING (TCP) !!!!!!!!!!!!!!!!");
             else if ( status == sf::Socket::Status::Partial )
-                std::cout << "Partial receive might cause bugs!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+                DebugLog::debug("Partial receive might cause bugs!!!!!!!!!!!!!!!!!!!!!!!!");
             else if ( status != sf::Socket::NotReady )
-                std::cout << "SOME PACKET ( NOT INTERPRETED / FINISHED ) " << status << std::endl;
+                DebugLog::trace("SOME PACKET ( NOT INTERPRETED / FINISHED ) %d", status);
             // TODO : in case of other crashes, insert disconnected status error code and inspect further
         }
     //}
@@ -243,7 +245,7 @@ void SyncManager::requestClientEvent(const char* eventName){
 
     SyncManager::tcpSocket.send(tempPacket);
 
-    std::cout << "Requested client event " << eventName << std::endl;
+    DebugLog::debug("Requested client event %s",eventName);
 }
 
 void SyncManager::registerObjectToServer(Object* obj){
@@ -251,13 +253,13 @@ void SyncManager::registerObjectToServer(Object* obj){
     newPacket = obj->generateObjectPacket();
     SyncManager::tcpSocket.send(newPacket);
 
-    std::cout << "Sent client object registration packet to server on id " << obj->getClientID() << std::endl;
+    DebugLog::debug( "Sent client object registration packet to server on id %d", obj->getClientID() );
 }
 
 
 void SyncManager::registerClientEvent(const char* eventName, sf::Uint16 id){
     clientEvents[eventName] = id;
-    std::cout << "Registered client event " << eventName << " " << id << std::endl;
+    DebugLog::debug( "Registered client event %s %d", eventName, id );
 }
 
 
@@ -265,13 +267,11 @@ void SyncManager::parseBuffer(){
 
     //printf( "Received : %s\n", packageBuffer );
 
-    printf("Received something! ");
-
     sf::Uint16 packetCode;
 
     receivePacket >> packetCode;
 
-    printf("%d ",packetCode);
+    DebugLog::trace("Received something ( packetID %d )",packetCode);
 
     switch ( packetCode ){
         case C_SEND_SERVER_EVENTS:{ // Server Events
@@ -306,7 +306,7 @@ void SyncManager::parseBuffer(){
             obj->setSynced(true);
             StageManager::gameState->bindServerIDtoClientObject(serverID,clientID);
 
-            std::cout << "Client object " << clientID << " is now synced with serverID " << serverID << std::endl;
+            DebugLog::debug("Client object %d is now synced with serverID %d", clientID, serverID );
 
             break;
         }
