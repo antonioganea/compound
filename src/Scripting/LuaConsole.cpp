@@ -203,6 +203,7 @@ void LuaConsole::init(){
 
         // Make standard libraries available in the Lua object
         luaL_openlibs(state);
+        luaopen_math();
 
         lua_pushcfunction(state, l_my_print);
         lua_setglobal(state, "print");
@@ -248,6 +249,9 @@ void LuaConsole::init(){
 
         lua_pushcfunction(state, l_TriggerServerEvent);
         lua_setglobal(state, "TriggerServerEvent");
+
+        lua_pushcfunction(state, l_GetController);
+        lua_setglobal(state, "GetController");
 
 
 

@@ -167,7 +167,8 @@ void SyncManager::requestServerEvents(){
 
 //**********************************RECEIVING PART**************************************
 
-sf::Packet receivePacket;
+sf::Packet tcpReceivePacket;
+sf::Packet udpReceivePacket;
 
 void SyncManager::receivePackets(){
     if ( !SyncManager::connected )
@@ -182,9 +183,9 @@ void SyncManager::receivePackets(){
 //puts("H1");
     //if ( SyncManager::socketSelector.isReady(SyncManager::tcpSocket) ){
 
-        status = SyncManager::tcpSocket.receive(receivePacket);
+        status = SyncManager::tcpSocket.receive(tcpReceivePacket);
         if ( status == sf::Socket::Status::Done ){
-            SyncManager::parseBuffer();
+            SyncManager::parseBuffer(tcpReceivePacket);
 
     /*
             std::cout << "RECEIVED A PACKET (TCP)" << received << " bytes" << std::endl;
@@ -208,22 +209,23 @@ void SyncManager::receivePackets(){
 //puts("H2");
     //END OF TCP RECEIVING PART ----------------------------------------------------------
 
-/*
+
     //UDP RECEIVING PART ---------------------------------------------------------------
     //TODO : find a way to write this without toggling setBlocking() twice every frame
     SyncManager::udpSocket.setBlocking(false); // TODO : GET RID OF THIS
     sf::IpAddress _address = SyncManager::address; // also try to get rid of this, passing as arguments overwrites the value
     unsigned short int _port = SyncManager::serverPort; // ... same
-    status = SyncManager::udpSocket.receive(SyncManager::packageBuffer,128,received,_address,_port);
+    status = SyncManager::udpSocket.receive(udpReceivePacket,_address,_port);
 
     if ( status == sf::Socket::Status::Done ){
-        SyncManager::parseBuffer( received );
+        SyncManager::parseBuffer( udpReceivePacket );
 
+        /*
         std::cout << "RECEIVED A PACKET (UDP)" << received << " bytes" << std::endl;
         for ( int i = 0; i < received; i++ ){
             std::cout << (int)(SyncManager::packageBuffer[i]) << " ";
         }std::cout << std::endl;
-
+        */
     }
     else{
         if ( status == sf::Socket::Status::Error )
@@ -235,7 +237,7 @@ void SyncManager::receivePackets(){
     SyncManager::udpSocket.setBlocking(true); // TODO : GET RID OF THIS
 
     //END OF UDP RECEIVING PART ----------------------------------------------------------
-*/
+
 }
 
 void SyncManager::requestClientEvent(const char* eventName){
@@ -263,7 +265,7 @@ void SyncManager::registerClientEvent(const char* eventName, sf::Uint16 id){
 }
 
 
-void SyncManager::parseBuffer(){
+void SyncManager::parseBuffer( sf::Packet& receivePacket ){
 
     //printf( "Received : %s\n", packageBuffer );
 

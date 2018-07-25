@@ -81,3 +81,16 @@ int l_AddEventHandler(lua_State* L) {
 
     return 0;
 }
+
+// GetController( )
+int l_GetController(lua_State* L) {
+    if ( sf::Joystick::isConnected(0) ){
+        float x = sf::Joystick::getAxisPosition(0,sf::Joystick::Axis::X);
+        float y = sf::Joystick::getAxisPosition(0,sf::Joystick::Axis::Y);
+
+        lua_pushnumber(L,x);
+        lua_pushnumber(L,y);
+        return 2;
+    }
+    return 0;
+}

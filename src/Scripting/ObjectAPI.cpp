@@ -15,7 +15,8 @@ int l_SetPosition(lua_State* L) {
     if ( obj != 0 ){
         sf::Packet newPacket = obj->setPosition(x,y);
         if ( obj->getSynced() )
-            SyncManager::sendTCPMessage( newPacket );
+            SyncManager::sendUDPMessage( newPacket );
+            //SyncManager::sendTCPMessage( newPacket );
     }
 
 

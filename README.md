@@ -61,7 +61,7 @@ If you apply "RegisterAsServerObject( objectID )" on an object, any modification
 You can also make a server that serves game files for single-player games. ( and eventually also use the server for scoreboards, data storage, etc .. )
 
 ## Things that aren't yet implemented, but will be part of Compound
-Time is a precious thing to have, and Compound is currently still in alpha. We're doing our best to develop it, but we will add these :
+There are a couple things that can be added in the future of Compound :
 - Master servers ( So you can just press a button and see a list of available servers )
 - LAN server broadcasting ( If you create a server, members of the Local Area Network will be able to join without having to ask for the ip )
 - A built-in synthesizer ( at least the traditional 4 basic soundwaves )
@@ -120,17 +120,6 @@ TriggerServerEvent( eventName, arg1, arg2, ... , arg8 )
   "onFrame"
   "onTextEntered" ( with a character as argument )
 ```
-## How do I test it?
-This build comes packed with a simple game called __Virus Invaders__.
-
-You have to download the server and client ( available [here](http://compoundgame.000webhostapp.com/) ). Then :
-- Start the server
-- Start client 1, open the debugging console by pressing BACKTICK and type : connect("127.0.0.1") and hit Enter
-- Do the same thing with a second client. ( Eventually you can put a different ip there if you actually want to test it on different computers )
-- Hope that the brittle protocol doesn't leak anything. It is still early alpha and at the moment it is just proof of concept. Don't expect it to work like a 3 year old project developed by a big company. If it crashes whatsoever, retry these steps from the beggining.
-- If there aren't any problems, close the debugging console by pressing BACKTICK and you should be able to see viruses appear onscreen with some hexcodes above their head. You have a text input in the bottom-left corner. Type the names above a virus' head and hit Enter. You will give the turret a command to exterminate that virus. ( Your friend over the network can also do that in the same time ).
-
 ## Used Libraries
-<a href="https://www.sfml-dev.org/"><img src="https://www.sfml-dev.org/download/goodies/sfml-logo-small.png" height="50" hspace="20" /></a>
-<br><br>
-<a href="http://www.lua.org/"><img src="http://www.andreas-rozek.de/Lua/Lua-Logo_128x128.png" height="100" hspace="100" /></a>
+ + SFML
+ + Lua

@@ -41,7 +41,7 @@ class SyncManager
         static void sendUDPMessage( sf::Packet packetToSend );
 
         static void receivePackets();
-        static void parseBuffer();
+        static void parseBuffer( sf::Packet& receivePacket );
 
         static int myPlayerID;
         static bool players[MAX_PLAYERS];
